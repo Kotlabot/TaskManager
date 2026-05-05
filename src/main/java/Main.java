@@ -6,7 +6,7 @@ public class Main {
         TaskManager tasks = new TaskManager();
         printMenu();
         while(true){
-            String command = userInput.nextLine();
+            String command = userInput.nextLine().trim();
             switch(command){
                 case "a":
                     tasks.addTask(userInput);
