@@ -3,18 +3,19 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args){
         Scanner userInput = new Scanner(System.in);
+        TaskManager tasks = new TaskManager();
         printMenu();
         while(true){
             String command = userInput.nextLine();
             switch(command){
                 case "a":
-                    // Call a method to add new task
+                    tasks.addTask(userInput);
                     break;
                 case "d":
-                    // Call a method to delete task
+                    tasks.deleteTask(userInput);
                     break;
                 case "e":
-                    // Call a method to edit task
+                    tasks.editTask(userInput);
                     break;
                 case "s":
                     // Call a method to save tasks
@@ -22,12 +23,18 @@ public class Main {
                 case "l":
                     // Call a method to load tasks
                     break;
+                case "p":
+                    tasks.printAllTasks();
+                    break;
                 case "pp":
                     // Call a method to print tasks
                     break;
                 case "pd":
                     // Call a method to print tasks
                     break;
+                case "q":
+                    System.out.println("Exiting Task Manager...");
+                    return;
                 default:
                     System.out.println("Invalid command option.");
             }
@@ -38,15 +45,16 @@ public class Main {
     public static void printMenu(){
         System.out.println(
                 """
-                   Task Manager
-                   1) To add new task, press "a" and enter key
-                   2) To delete existing task, press "d" and enter key
-                   3) To edit existing tasks, press "e" and enter key
-                   4) To save existing tasks, press "s" and enter key
-                   5) To load a list of tasks, press "l" and enter key
-                   6) To print tasks according to priority, press "pp" and enter key
-                   7) To print tasks according to deadline, press "pd" and enter key
-                   8) To end this program, press escape key
+                   ------ Task Manager MAIN MENU -------
+                   1) To ADD new task, press "a" and enter key
+                   2) To DELETE existing task, press "d" and enter key
+                   3) To EDIT existing tasks, press "e" and enter key
+                   4) To SAVE existing tasks, press "s" and enter key
+                   5) To LOAD a list of tasks, press "l" and enter key
+                   6) To PRINT all tasks, press "p" and enter key
+                   7) To PRINT tasks according to PRIORITY, press "pp" and enter key
+                   8) To PRINT tasks according to DEADLINE, press "pd" and enter key
+                   9) To END this program, press "q" and enter key
                 """
         );
     }
