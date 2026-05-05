@@ -23,7 +23,7 @@ public class Task {
     }
 
     public String getName(){
-        return this.name;
+        return name;
     }
 
     public void setDescription(String description){
@@ -31,7 +31,12 @@ public class Task {
     }
 
     public String getDescription(){
-        return this.description;
+        if(description != null){
+            return description;
+        }
+        else{
+            return "none";
+        }
     }
 
     public void setDeadline(LocalDate deadline){
@@ -39,7 +44,7 @@ public class Task {
     }
 
     public LocalDate getDeadline(){
-        return this.deadline;
+        return deadline;
     }
 
     public void setPriority(int priority){
@@ -47,7 +52,7 @@ public class Task {
     }
 
     public int getPriority(){
-        return this.priority;
+        return priority;
     }
 
     public void setCompleted(boolean completed){
@@ -55,7 +60,7 @@ public class Task {
     }
 
     public boolean getCompleted(){
-        return this.completed;
+        return completed;
     }
 
     public void setType(String type){
@@ -63,13 +68,17 @@ public class Task {
     }
 
     public String getType(){
-        return this.type;
+        if(type != null){
+            return type;
+        }
+        else{
+            return "none";
+        }
     }
 
     @Override
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
         String deadlineString;
         if(deadline != null){
             deadlineString = deadline.format(formatter);
@@ -78,21 +87,8 @@ public class Task {
             deadlineString = "none";
         }
 
-        String descriptionString;
-        if(description != null){
-            descriptionString = description;
-        }
-        else{
-            descriptionString = "none";
-        }
-
-        String typeString;
-        if(type != null){
-            typeString = type;
-        }
-        else{
-            typeString = "none";
-        }
+        String descriptionString = getDescription();
+        String typeString = getType();
 
         String completedString;
         if(completed){
