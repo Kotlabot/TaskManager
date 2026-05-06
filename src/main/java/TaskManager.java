@@ -17,15 +17,15 @@ public class TaskManager {
         this.tasks = new ArrayList<>(tasks);
     }
 
-    public void printAllTasks() {
-        if (tasks.isEmpty()) {
+    public void printAllTasks(){
+        if(tasks.isEmpty()){
             System.out.println("No tasks available.\n");
             return;
         }
 
         System.out.println("------ TASK LIST ------\n");
 
-        for (Task task : tasks) {
+        for(Task task : tasks){
             System.out.println(task + "\n----------------------\n");
         }
     }
@@ -75,17 +75,18 @@ public class TaskManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate taskDeadline = null;
 
-        while (true){
+        while(true){
             String inputDate = input.nextLine().trim();
 
-            if (inputDate.isEmpty()){
+            if(inputDate.isEmpty()){
                 break;
             }
 
             try{
                 taskDeadline = LocalDate.parse(inputDate, formatter);
                 break;
-            } catch (DateTimeParseException e){
+            }
+            catch(DateTimeParseException e){
                 System.out.println("Invalid format. Please use DD.MM.YYYY or press enter key to skip:");
             }
         }
@@ -260,10 +261,10 @@ public class TaskManager {
         System.out.println("Current deadline of task: '" + currentDeadline + "'");
         System.out.println("Enter new deadline in format DD.MM.YYYY and press enter key, in case you want to delete deadline, just press enter key:");
 
-        while (true){
+        while(true){
             String inputDate = input.nextLine().trim();
 
-            if (inputDate.isEmpty()){
+            if(inputDate.isEmpty()){
                 task.setDeadline(null);
                 System.out.println("Deadline successfully deleted!\n");
                 break;
@@ -279,7 +280,8 @@ public class TaskManager {
                 task.setDeadline(inputDeadline);
                 System.out.println("Deadline successfully changed from: '" + currentDeadline + "' to: '" + inputDate + "'\n");
                 break;
-            } catch (DateTimeParseException e){
+            }
+            catch(DateTimeParseException e){
                 System.out.println("Invalid format. Please use DD.MM.YYYY, or press 'q' to keep current deadline, or press enter key to delete deadline:");
             }
         }
@@ -315,7 +317,7 @@ public class TaskManager {
         System.out.println("Current type of task: '" + currentType + "'");
         System.out.println("Enter new type and press enter key:");
 
-        while (true) {
+        while(true){
             String newType = input.nextLine();
             if(newType.isEmpty()){
                 System.out.println("No type specified. Write new type and press enter key, or press 'q' to keep the current type, or press 'd' to delete current type:");
@@ -395,7 +397,7 @@ public class TaskManager {
     }
 
     public void printTasksByPriority(){
-        if (tasks.isEmpty()) {
+        if(tasks.isEmpty()){
             System.out.println("No tasks available.\n");
             return;
         }
@@ -405,13 +407,13 @@ public class TaskManager {
 
         System.out.println("------ TASKS SORTED BY PRIORITY ------\n");
 
-        for (Task task : sorted) {
+        for(Task task : sorted){
             System.out.println(task + "\n--------------------------------------\n");
         }
     }
 
     private Task[] mergeSortByPriority(Task[] array){
-        if (array.length <= 1) {
+        if(array.length <= 1){
             return array;
         }
 
@@ -425,12 +427,12 @@ public class TaskManager {
 
     private Task[] mergeByPriority(Task[] left, Task[] right){
         Task[] merged = new Task[left.length + right.length];
-        int lefIndex = 0;
+        int leftIndex = 0;
         int rightIndex = 0;
         int mergedIndex = 0;
 
-        while(lefIndex < left.length && rightIndex < right.length){
-            int leftPriority = left[lefIndex].getPriority();
+        while(leftIndex < left.length && rightIndex < right.length){
+            int leftPriority = left[leftIndex].getPriority();
             int rightPriority = right[rightIndex].getPriority();
 
             if(leftPriority == 0){
@@ -439,17 +441,79 @@ public class TaskManager {
             if(rightPriority == 0){
                 rightPriority = Integer.MAX_VALUE;
             }
-
             if(leftPriority <= rightPriority){
-                merged[mergedIndex++] = left[lefIndex++];
+                merged[mergedIndex++] = left[leftIndex++];
             }
             else{
                 merged[mergedIndex++] = right[rightIndex++];
             }
         }
 
-        while(lefIndex < left.length){
-            merged[mergedIndex++] = left[lefIndex++];
+        while(leftIndex < left.length){
+            merged[mergedIndex++] = left[leftIndex++];
+        }
+        while(rightIndex < right.length){
+            merged[mergedIndex++] = right[rightIndex++];
+        }
+
+        return merged;
+    }
+
+    public void printTasksByDeadline(){
+        if(tasks.isEmpty()){
+            System.out.println("No tasks available.\n");
+            return;
+        }
+
+        Task[] array = tasks.toArray(new Task[0]);
+        Task[] sorted = mergeSortByDeadline(array);
+
+        System.out.println("------ TASKS SORTED BY DEADLINE ------\n");
+
+        for(Task task : sorted){
+            System.out.println(task + "\n--------------------------------------\n");
+        }
+    }
+
+    private Task[] mergeSortByDeadline(Task[] array){
+        if(array.length <= 1){
+            return array;
+        }
+
+        int middle = array.length / 2;
+
+        Task[] left = mergeSortByDeadline(Arrays.copyOfRange(array, 0, middle));
+        Task[] right = mergeSortByDeadline(Arrays.copyOfRange(array, middle, array.length));
+
+        return mergeByDeadline(left, right);
+    }
+
+    private Task[] mergeByDeadline(Task[] left, Task[] right){
+        Task[] merged = new Task[left.length + right.length];
+        int leftIndex = 0;
+        int rightIndex = 0;
+        int mergedIndex = 0;
+
+        while(leftIndex < left.length && rightIndex < right.length){
+            LocalDate leftDate = left[leftIndex].getDeadline();
+            LocalDate rightDate = right[rightIndex].getDeadline();
+
+            if(leftDate == null){
+                merged[mergedIndex++] = right[rightIndex++];
+            }
+            else if(rightDate == null){
+                merged[mergedIndex++] = left[leftIndex++];
+            }
+            else if(leftDate.isBefore(rightDate) || leftDate.equals(rightDate)){
+                merged[mergedIndex++] = left[leftIndex++];
+            }
+            else{
+                merged[mergedIndex++] = right[rightIndex++];
+            }
+        }
+
+        while(leftIndex < left.length){
+            merged[mergedIndex++] = left[leftIndex++];
         }
         while(rightIndex < right.length){
             merged[mergedIndex++] = right[rightIndex++];

@@ -30,7 +30,7 @@ public class Main {
                     tasks.printTasksByPriority();
                     break;
                 case "pd":
-                    // Call a method to print tasks
+                    tasks.printTasksByDeadline();
                     break;
                 case "q":
                     System.out.println("Exiting Task Manager...");
