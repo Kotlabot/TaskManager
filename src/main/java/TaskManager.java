@@ -1,10 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class TaskManager {
     private List<Task> tasks;
@@ -395,6 +392,70 @@ public class TaskManager {
             }
             return false;
         }
+    }
+
+    public void printTasksByPriority(){
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available.\n");
+            return;
+        }
+
+        Task[] array = tasks.toArray(new Task[0]);
+        Task[] sorted = mergeSortByPriority(array);
+
+        System.out.println("------ TASKS SORTED BY PRIORITY ------\n");
+
+        for (Task task : sorted) {
+            System.out.println(task + "\n--------------------------------------\n");
+        }
+    }
+
+    private Task[] mergeSortByPriority(Task[] array){
+        if (array.length <= 1) {
+            return array;
+        }
+
+        int middle = array.length / 2;
+
+        Task[] left = mergeSortByPriority(Arrays.copyOfRange(array, 0, middle));
+        Task[] right = mergeSortByPriority(Arrays.copyOfRange(array, middle, array.length));
+
+        return mergeByPriority(left, right);
+    }
+
+    private Task[] mergeByPriority(Task[] left, Task[] right){
+        Task[] merged = new Task[left.length + right.length];
+        int lefIndex = 0;
+        int rightIndex = 0;
+        int mergedIndex = 0;
+
+        while(lefIndex < left.length && rightIndex < right.length){
+            int leftPriority = left[lefIndex].getPriority();
+            int rightPriority = right[rightIndex].getPriority();
+
+            if(leftPriority == 0){
+                leftPriority = Integer.MAX_VALUE;
+            }
+            if(rightPriority == 0){
+                rightPriority = Integer.MAX_VALUE;
+            }
+
+            if(leftPriority <= rightPriority){
+                merged[mergedIndex++] = left[lefIndex++];
+            }
+            else{
+                merged[mergedIndex++] = right[rightIndex++];
+            }
+        }
+
+        while(lefIndex < left.length){
+            merged[mergedIndex++] = left[lefIndex++];
+        }
+        while(rightIndex < right.length){
+            merged[mergedIndex++] = right[rightIndex++];
+        }
+
+        return merged;
     }
 
 }

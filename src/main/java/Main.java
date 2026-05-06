@@ -27,7 +27,7 @@ public class Main {
                     tasks.printAllTasks();
                     break;
                 case "pp":
-                    // Call a method to print tasks
+                    tasks.printTasksByPriority();
                     break;
                 case "pd":
                     // Call a method to print tasks
