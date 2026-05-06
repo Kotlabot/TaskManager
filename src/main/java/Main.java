@@ -27,10 +27,13 @@ public class Main {
                     tasks.printAllTasks();
                     break;
                 case "pp":
-                    tasks.printTasksByPriority();
+                    tasks.printTasksSortedByPriority();
                     break;
                 case "pd":
-                    tasks.printTasksByDeadline();
+                    tasks.printTasksSortedByDeadline();
+                    break;
+                case "pt":
+                    tasks.printTasksOfType(userInput);
                     break;
                 case "q":
                     System.out.println("Exiting Task Manager...");
@@ -46,15 +49,16 @@ public class Main {
         System.out.println(
                 """
                    ------ Task Manager MAIN MENU -------
-                   1) To ADD new task, press "a" and enter key
-                   2) To DELETE existing task, press "d" and enter key
-                   3) To EDIT existing tasks, press "e" and enter key
-                   4) To SAVE existing tasks, press "s" and enter key
-                   5) To LOAD a list of tasks, press "l" and enter key
-                   6) To PRINT all tasks, press "p" and enter key
-                   7) To PRINT tasks according to PRIORITY, press "pp" and enter key
-                   8) To PRINT tasks according to DEADLINE, press "pd" and enter key
-                   9) To END this program, press "q" and enter key
+                   1) To ADD new task, press 'a' and enter key
+                   2) To DELETE existing task, press 'd' and enter key
+                   3) To EDIT existing tasks, press 'e' and enter key
+                   4) To SAVE existing tasks, press 's' and enter key
+                   5) To LOAD a list of tasks, press 'l' and enter key
+                   6) To PRINT all tasks, press 'p' and enter key
+                   7) To SORT and PRINT tasks according to PRIORITY, press 'pp' and enter key
+                   8) To SORT and PRINT tasks according to DEADLINE, press 'pd' and enter key
+                   9) To PRINT tasks with defined TYPE, press 'pt' and enter key
+                   10) To END this program, press 'q' and enter key
                 """
         );
     }

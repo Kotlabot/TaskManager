@@ -396,7 +396,7 @@ public class TaskManager {
         }
     }
 
-    public void printTasksByPriority(){
+    public void printTasksSortedByPriority(){
         if(tasks.isEmpty()){
             System.out.println("No tasks available.\n");
             return;
@@ -404,6 +404,7 @@ public class TaskManager {
 
         Task[] array = tasks.toArray(new Task[0]);
         Task[] sorted = mergeSortByPriority(array);
+        tasks = new ArrayList<>(Arrays.asList(sorted));
 
         System.out.println("------ TASKS SORTED BY PRIORITY ------\n");
 
@@ -459,7 +460,7 @@ public class TaskManager {
         return merged;
     }
 
-    public void printTasksByDeadline(){
+    public void printTasksSortedByDeadline(){
         if(tasks.isEmpty()){
             System.out.println("No tasks available.\n");
             return;
@@ -467,6 +468,7 @@ public class TaskManager {
 
         Task[] array = tasks.toArray(new Task[0]);
         Task[] sorted = mergeSortByDeadline(array);
+        tasks = new ArrayList<>(Arrays.asList(sorted));
 
         System.out.println("------ TASKS SORTED BY DEADLINE ------\n");
 
@@ -520,6 +522,41 @@ public class TaskManager {
         }
 
         return merged;
+    }
+
+    public void printTasksOfType(Scanner input){
+        System.out.println("Enter task type to print all tasks of this type:");
+        while(true){
+            String inputType = input.nextLine();
+
+            if(inputType.isEmpty()){
+                System.out.println("No type specified, please enter type or press 'q' to go back to main menu:");
+            }
+            else if(inputType.equals("q")){
+                break;
+            }
+            else{
+                List<Task> oneTypeTasks = new ArrayList<>();
+                for(Task task : tasks){
+                    if(task.getType().equals(inputType)){
+                        oneTypeTasks.add(task);
+                    }
+                }
+
+                if(oneTypeTasks.isEmpty()){
+                    System.out.println("Defined type does not exist, please enter valid type, or press 'q' to go back to main menu:");
+                    continue;
+                }
+                else{
+                    System.out.println("------ TASKS OF TYPE '" + inputType + "' ------\n");
+
+                    for(Task task : oneTypeTasks){
+                        System.out.println(task + "\n----------------------\n");
+                    }
+                    break;
+                }
+            }
+        }
     }
 
 }
