@@ -4,7 +4,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class TaskManager {
-    private List<Task> tasks;
+    public List<Task> tasks;
     private int taskCounter = 1;
 
     // Create empty list of tasks
@@ -47,7 +47,7 @@ public class TaskManager {
     }
 
     private String setName(Scanner input){
-        System.out.println("Write name of new task and press enter key:");
+        System.out.println("Write name of new task and press Enter:");
         String name = input.nextLine();
         String taskName;
 
@@ -62,7 +62,7 @@ public class TaskManager {
     }
 
     private String setDescription(Scanner input){
-        System.out.println("If you would like to add a description of this task, write it down and press enter key, otherwise press enter key:");
+        System.out.println("If you would like to add a description of this task, write it down and press Enter, otherwise just press Enter:");
         String taskDescription = input.nextLine();
         if(taskDescription.isEmpty()){
             taskDescription = null;
@@ -71,7 +71,7 @@ public class TaskManager {
     }
 
     private LocalDate setDeadline(Scanner input){
-        System.out.println("If you would like to add a deadline to this task, enter deadline in format 'DD.MM.YYYY' and press enter key, otherwise, press enter key:");
+        System.out.println("If you would like to add a deadline to this task, enter deadline in format 'DD.MM.YYYY' and press Enter, otherwise just press Enter:");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate taskDeadline = null;
 
@@ -87,14 +87,14 @@ public class TaskManager {
                 break;
             }
             catch(DateTimeParseException e){
-                System.out.println("Invalid format. Please use DD.MM.YYYY or press enter key to skip:");
+                System.out.println("Invalid format. Please use DD.MM.YYYY or press Enter to skip:");
             }
         }
         return taskDeadline;
     }
 
     private int setPriority(Scanner input){
-        System.out.println("If you would like to add this task a priority, enter a number (lower number = higher priority) and press enter key, otherwise, press enter key (no priority defaults to 0):");
+        System.out.println("If you would like to add this task a priority, enter a number (lower number = higher priority) and press Enter, otherwise just press Enter (no priority defaults to 0):");
         int taskPriority = 0;
         while(true){
             String inputPriority = input.nextLine().trim();
@@ -108,14 +108,14 @@ public class TaskManager {
                 break;
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid format. Please select a valid integer or press enter key to skip:");
+                System.out.println("Invalid format. Please select a valid integer or press Enter to skip:");
             }
         }
         return taskPriority;
     }
 
     private String setType(Scanner input){
-        System.out.println("If you would like to add this task's type (work/personal/school subject), enter a type and press enter key, otherwise, press enter key:");
+        System.out.println("If you would like to add this task's type (work/personal/school subject), enter a type and press Enter, otherwise, press Enter:");
         String taskType = input.nextLine();
         if(taskType.isEmpty()){
             taskType = null;
@@ -124,7 +124,7 @@ public class TaskManager {
     }
 
     public void deleteTask(Scanner input){
-        System.out.println("Enter name of task you would like to delete and press enter key:");
+        System.out.println("Enter name of task you would like to delete and press Enter:");
         String taskName = input.nextLine();
         for(Task task : tasks){
             if(Objects.equals(task.getName(), taskName)){
@@ -137,7 +137,7 @@ public class TaskManager {
     }
 
     public void editTask(Scanner input){
-        System.out.println("Enter name of task you would like to edit and press enter key:");
+        System.out.println("Enter name of task you would like to edit and press Enter:");
         String taskName = input.nextLine();
         Task editedTask = null;
 
@@ -192,13 +192,13 @@ public class TaskManager {
         System.out.println(
                 """
                    ------ Task Manager EDIT MENU  -------
-                   1) To edit task's NAME, press 'n' and enter key
-                   2) To edit task's DESCRIPTION, press 'ds' and enter key
-                   3) To edit task's DEADLINE, press 'dl' and enter key
-                   4) To edit task's PRIORITY, press 'p' and enter key
-                   5) To edit task's TYPE, press 't' and enter key
-                   6) To edit task's COMPLETENESS, press 'c' and enter key
-                   7) To exit EDIT MODE, press 'q' and enter key
+                   1) To edit task's NAME, enter 'n' and press Enter
+                   2) To edit task's DESCRIPTION, enter 'ds' and press Enter
+                   3) To edit task's DEADLINE, enter 'dl' and press Enter
+                   4) To edit task's PRIORITY, enter 'p' and press Enter
+                   5) To edit task's TYPE, enter 't' and press Enter
+                   6) To edit task's COMPLETENESS, enter 'c' and press Enter
+                   7) To exit EDIT MODE, enter 'q' and press Enter
                 """
         );
     }
@@ -206,12 +206,12 @@ public class TaskManager {
     private void editName(Scanner input, Task task){
         String currentName = task.getName();
         System.out.println("Current name of task: '" + currentName + "'");
-        System.out.println("Enter new name and press enter key:");
+        System.out.println("Enter new name and press Enter:");
 
         while(true){
             String inputName = input.nextLine();
             if(inputName.isEmpty()){
-                System.out.println("No new name entered, please enter new name and press enter key or press 'q' to keep the current name:");
+                System.out.println("No new name entered, please enter new name and press Enter or enter 'q' and press Enter to keep the current name:");
                 continue;
             }
             if(inputName.equals("q")){
@@ -228,7 +228,7 @@ public class TaskManager {
     private void editDescription(Scanner input, Task task){
         String currentDescription = task.getDescription();
         System.out.println("Current description of task: '" + currentDescription + "'");
-        System.out.println("Enter new description and press enter key:");
+        System.out.println("Enter new description and press Enter:");
 
         while(true){
             String inputDescription = input.nextLine();
@@ -237,7 +237,7 @@ public class TaskManager {
                 return;
             }
             if(inputDescription.isEmpty()){
-                System.out.println("No new description entered. Add new description or keep old one by pressing 'q':");
+                System.out.println("No new description entered. Add new description or keep old one by entering 'q' and pressing Enter:");
             }
             else{
                 task.setDescription(inputDescription);
@@ -259,7 +259,7 @@ public class TaskManager {
         }
 
         System.out.println("Current deadline of task: '" + currentDeadline + "'");
-        System.out.println("Enter new deadline in format DD.MM.YYYY and press enter key, in case you want to delete deadline, just press enter key:");
+        System.out.println("Enter new deadline in format DD.MM.YYYY and press Enter, in case you want to delete deadline, just press Enter:");
 
         while(true){
             String inputDate = input.nextLine().trim();
@@ -282,7 +282,7 @@ public class TaskManager {
                 break;
             }
             catch(DateTimeParseException e){
-                System.out.println("Invalid format. Please use DD.MM.YYYY, or press 'q' to keep current deadline, or press enter key to delete deadline:");
+                System.out.println("Invalid format. Please use DD.MM.YYYY, or enter 'q' and press Enter to keep current deadline, or press Enter to delete deadline:");
             }
         }
     }
@@ -290,7 +290,7 @@ public class TaskManager {
     private void editPriority(Scanner input, Task task){
         int currentPriority = task.getPriority();
         System.out.println("Current priority of task: '" + currentPriority + "'");
-        System.out.println("Enter new priority number (lower number = higher priority) and press enter key:");
+        System.out.println("Enter new priority number (lower number = higher priority) and press Enter:");
 
         while(true){
             String inputPriority = input.nextLine().trim();
@@ -307,7 +307,7 @@ public class TaskManager {
                 break;
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid format. Please select a valid integer or press enter key to keep current priority:");
+                System.out.println("Invalid format. Please select a valid integer or press Enter to keep current priority:");
             }
         }
     }
@@ -320,7 +320,7 @@ public class TaskManager {
         while(true){
             String newType = input.nextLine();
             if(newType.isEmpty()){
-                System.out.println("No type specified. Write new type and press enter key, or press 'q' to keep the current type, or press 'd' to delete current type:");
+                System.out.println("No type specified. Write new type and press Enter, or enter 'q' and press Enter to keep the current type, or enter 'd' and press Enter to delete current type:");
                 continue;
             }
             if(newType.equals("d")){
@@ -345,7 +345,7 @@ public class TaskManager {
         String taskName = task.getName();
 
         if(completed){
-            System.out.println("Current task is marked as completed. Press enter key to mark task as incompleted, or press 'q' to remain unchanged.");
+            System.out.println("Current task is marked as completed. Press Enter to mark task as incompleted, or enter 'q' and press Enter to remain unchanged.");
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
@@ -358,18 +358,18 @@ public class TaskManager {
                     return false;
                 }
                 else{
-                    System.out.println("Invalid option! Press enter key to mark task as incompleted, or press 'q' to remain unchanged.");
+                    System.out.println("Invalid option! Press Enter to mark task as incompleted, or enter 'q' and press Enter to remain unchanged.");
                 }
             }
         }
         else{
-            System.out.println("Current task is marked as incompleted. Press enter key to mark task as completed, or press 'q' to remain unchanged.");
+            System.out.println("Current task is marked as incompleted. Press Enter to mark task as completed, or enter 'q' and press Enter to remain unchanged.");
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
                     task.setCompleted(true);
                     System.out.println("Successfully marked current task as completed.\n");
-                    System.out.println("Task '" + taskName + "' is now completed. Would you like to delete this task? Type 'yes' or 'no' and press enter key:");
+                    System.out.println("Task '" + taskName + "' is now completed. Would you like to delete this task? Type 'yes' or 'no' and press Enter:");
                     String answerDelete = input.nextLine().trim();
                     if(answerDelete.equals("yes")){
                         tasks.remove(task);
@@ -389,7 +389,7 @@ public class TaskManager {
                     break;
                 }
                 else{
-                    System.out.println("Invalid option! Press enter key to mark task as completed, or press 'q' to remain unchanged.");
+                    System.out.println("Invalid option! Press Enter to mark task as completed, or enter 'q' and press Enter to remain unchanged.");
                 }
             }
             return false;
@@ -530,7 +530,7 @@ public class TaskManager {
             String inputType = input.nextLine();
 
             if(inputType.isEmpty()){
-                System.out.println("No type specified, please enter type or press 'q' to go back to main menu:");
+                System.out.println("No type specified, please enter type or enter 'q' and press Enter to go back to main menu:");
             }
             else if(inputType.equals("q")){
                 break;
@@ -544,7 +544,7 @@ public class TaskManager {
                 }
 
                 if(oneTypeTasks.isEmpty()){
-                    System.out.println("Defined type does not exist, please enter valid type, or press 'q' to go back to main menu:");
+                    System.out.println("Defined type does not exist, please enter valid type, or enter 'q' and press Enter to go back to main menu:");
                     continue;
                 }
                 else{
