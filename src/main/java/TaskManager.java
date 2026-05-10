@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-public class TaskManager {
+public class TaskManager{
     public List<Task> tasks;
     private int taskCounter = 1;
 

@@ -1,6 +1,7 @@
+import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class Main{
     public static void main(String[] args){
         Scanner userInput = new Scanner(System.in);
         TaskManager tasks = new TaskManager();
@@ -23,7 +24,8 @@ public class Main {
                     iomanager.saveTasksToTXT(userInput, tasks.tasks);
                     break;
                 case "ltxt":
-                    // Call a method to load tasks as text file
+                    List<Task> loadedTasks = iomanager.loadTasksFromTXT(userInput);
+                    tasks = new TaskManager(loadedTasks);
                     break;
                 case"sjson":
                     // Call a method to save tasks as JSON file
