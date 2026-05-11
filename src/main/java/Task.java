@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class Task{
     private String name;
@@ -76,6 +77,60 @@ public class Task{
         else{
             return "none";
         }
+    }
+
+    public String printTaskWithDeadline(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String deadlineString;
+        if(deadline != null){
+            deadlineString = deadline.format(formatter);
+
+            LocalDate today = LocalDate.now();
+            long daysDifference = ChronoUnit.DAYS.between(today, deadline);
+
+            if(daysDifference >= 0){
+                if(daysDifference == 0){
+                    deadlineString += " (today)";
+                }
+                else if(daysDifference == 1){
+                    deadlineString += " (in " + daysDifference + " day)";
+                }
+                else{
+                    deadlineString += " (in " + daysDifference + " days)";
+                }
+            }
+            else{
+                if(daysDifference == -1){
+                    deadlineString += " (" + Math.abs(daysDifference) + " day after deadline)";
+                }
+                else{
+                    deadlineString += " (" + Math.abs(daysDifference) + " days after deadline)";
+                }
+            }
+        }
+        else{
+            deadlineString = "none";
+        }
+
+        String descriptionString = getDescription();
+        String typeString = getType();
+
+        String completedString;
+        if(completed){
+            completedString = "completed";
+        }
+        else{
+            completedString = "incompleted";
+        }
+
+        return """
+           Name: %s
+           Description: %s
+           Deadline: %s
+           Priority: %d
+           Type: %s
+           Completed: %s
+           """.formatted(name, descriptionString, deadlineString, priority, typeString, completedString);
     }
 
     @Override

@@ -23,10 +23,10 @@ public class TaskManager{
             return;
         }
 
-        System.out.println("------ TASK LIST ------\n");
+        System.out.println("------ TASK LIST ------");
 
         for(Task task : tasks){
-            System.out.println(task + "\n----------------------\n");
+            System.out.println(task.printTaskWithDeadline() + "----------------------");
         }
     }
 
@@ -406,10 +406,10 @@ public class TaskManager{
         Task[] sorted = mergeSortByPriority(array);
         tasks = new ArrayList<>(Arrays.asList(sorted));
 
-        System.out.println("------ TASKS SORTED BY PRIORITY ------\n");
+        System.out.println("------ TASKS SORTED BY PRIORITY ------");
 
         for(Task task : sorted){
-            System.out.println(task + "\n--------------------------------------\n");
+            System.out.println(task.printTaskWithDeadline() + "--------------------------------------");
         }
     }
 
@@ -470,10 +470,10 @@ public class TaskManager{
         Task[] sorted = mergeSortByDeadline(array);
         tasks = new ArrayList<>(Arrays.asList(sorted));
 
-        System.out.println("------ TASKS SORTED BY DEADLINE ------\n");
+        System.out.println("------ TASKS SORTED BY DEADLINE ------");
 
         for(Task task : sorted){
-            System.out.println(task + "\n--------------------------------------\n");
+            System.out.println(task.printTaskWithDeadline() + "--------------------------------------");
         }
     }
 
@@ -548,10 +548,10 @@ public class TaskManager{
                     continue;
                 }
                 else{
-                    System.out.println("------ TASKS OF TYPE '" + inputType + "' ------\n");
+                    System.out.println("------ TASKS OF TYPE '" + inputType + "' ------");
 
                     for(Task task : oneTypeTasks){
-                        System.out.println(task + "\n----------------------\n");
+                        System.out.println(task.printTaskWithDeadline() + "----------------------");
                     }
                     break;
                 }
