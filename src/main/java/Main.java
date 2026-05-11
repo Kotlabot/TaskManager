@@ -24,14 +24,19 @@ public class Main{
                     iomanager.saveTasksToTXT(userInput, tasks.tasks);
                     break;
                 case "ltxt":
-                    List<Task> loadedTasks = iomanager.loadTasksFromTXT(userInput);
-                    tasks = new TaskManager(loadedTasks);
+                    List<Task> loadedTasksTXT = iomanager.loadTasksFromTXT(userInput);
+                    if(loadedTasksTXT != null){
+                        tasks = new TaskManager(loadedTasksTXT);
+                    }
                     break;
                 case"sjson":
                     iomanager.saveTasksToJSON(userInput, tasks.tasks);
                     break;
                 case "ljson":
-                    // Call method to load tasks as JSON file
+                    List<Task> loadedTasksJSON = iomanager.loadTasksFromJSON(userInput);
+                    if(loadedTasksJSON != null){
+                        tasks = new TaskManager(loadedTasksJSON);
+                    }
                     break;
                 case "p":
                     tasks.printAllTasks();

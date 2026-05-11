@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -81,8 +82,12 @@ public class IOManager{
         System.out.println("Enter name of file you would like to load. Available text files in directory 'data':");
         String extension = ".txt";
         Path path = getCorrectFilePathToLoad(input, extension);
-
-        return loadTasksInternal(path);
+        if(path != null){
+            return loadTasksFromTXTInternal(path);
+        }
+        else{
+            return null;
+        }
     }
 
     private Path getCorrectFilePathToLoad(Scanner input, String extension){
@@ -136,7 +141,7 @@ public class IOManager{
         return true;
     }
 
-    private List<Task> loadTasksInternal(Path path){
+    private List<Task> loadTasksFromTXTInternal(Path path){
         List<Task> loadedTasks = new ArrayList<>();
 
         try(BufferedReader reader = Files.newBufferedReader(path)){
@@ -205,6 +210,7 @@ public class IOManager{
         }
         catch(IOException e){
             System.out.println("Error while loading file.");
+            return null;
         }
 
         return loadedTasks;
@@ -231,5 +237,32 @@ public class IOManager{
         catch(IOException e){
             System.out.println("Error while saving file.");
         }
-     }
+    }
+
+    public List<Task> loadTasksFromJSON(Scanner input){
+        System.out.println("Enter name of file you would like to load. Available JSON files in directory 'data':");
+        String extension = ".json";
+        Path path = getCorrectFilePathToLoad(input, extension);
+
+        if(path != null){
+            return loadTasksFromJSONInternal(path);
+        }
+        else{
+            return null;
+        }
+    }
+
+    private List<Task> loadTasksFromJSONInternal(Path path){
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            List<Task> loadedTasks = mapper.readValue(path.toFile(), new TypeReference<List<Task>>() {});
+            System.out.println("Tasks successfully loaded!");
+            return loadedTasks;
+        }
+        catch(IOException e){
+            System.out.println("Error while loading file.");
+            return null;
+        }
+    }
 }
