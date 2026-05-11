@@ -28,7 +28,7 @@ public class Main{
                     tasks = new TaskManager(loadedTasks);
                     break;
                 case"sjson":
-                    // Call a method to save tasks as JSON file
+                    iomanager.saveTasksToJSON(userInput, tasks.tasks);
                     break;
                 case "ljson":
                     // Call method to load tasks as JSON file

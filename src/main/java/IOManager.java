@@ -1,3 +1,7 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,25 +17,8 @@ public class IOManager{
 
     public void saveTasksToTXT(Scanner input, List<Task> tasks){
         System.out.println("Please enter name under which this file will be saved or press Enter to select automatic name:");
-        Path path;
-
-        while(true){
-            String fileName = input.nextLine().trim();
-            if(fileName.isEmpty()){
-                System.out.println("Generating automatic name...");
-                path = generateFilePath();
-                break;
-            }
-            else{
-                String filePath = "data/" + fileName + ".txt";
-                path = Path.of(filePath);
-                if(Files.exists(path)){
-                    System.out.println("This filename already exists. Please enter different name or press Enter to select automatic name:");
-                    continue;
-                }
-                break;
-            }
-        }
+        String extension = ".txt";
+        Path path = getCorrectFilePathToSave(input, extension);
 
         try{
             Files.createDirectories(Path.of("data"));
@@ -53,13 +40,38 @@ public class IOManager{
         }
     }
 
-    private Path generateFilePath(){
+    private Path getCorrectFilePathToSave(Scanner input, String extension){
+        Path path;
+
+        while(true){
+            String fileName = input.nextLine().trim();
+            if(fileName.isEmpty()){
+                System.out.println("Generating automatic name...");
+                path = generateFilePath(extension);
+                break;
+            }
+            else{
+                fileName = addExtension(fileName, extension);
+                path = Path.of("data/" + fileName);
+
+                if(Files.exists(path)){
+                    System.out.println("This filename already exists. Please enter different name or press Enter to select automatic name:");
+                    continue;
+                }
+                break;
+            }
+        }
+
+        return path;
+    }
+
+    private Path generateFilePath(String extension){
         int counter = 1;
-        Path path = Path.of("data/tasks" + counter + ".txt");
+        Path path = Path.of("data/tasks" + counter + extension);
 
         while(Files.exists(path)){
             counter++;
-            path = Path.of("data/tasks" + counter + ".txt");
+            path = Path.of("data/tasks" + counter + extension);
         }
 
         return path;
@@ -67,26 +79,43 @@ public class IOManager{
 
     public List<Task> loadTasksFromTXT(Scanner input){
         System.out.println("Enter name of file you would like to load. Available text files in directory 'data':");
+        String extension = ".txt";
+        Path path = getCorrectFilePathToLoad(input, extension);
+
+        return loadTasksInternal(path);
+    }
+
+    private Path getCorrectFilePathToLoad(Scanner input, String extension){
         boolean proceed;
 
-        proceed = printAvailableTXTFiles();
+        proceed = printAvailableFiles(extension);
         if(!proceed){
             return null;
         }
 
         String fileName = input.nextLine().trim();
+        fileName = addExtension(fileName, extension);
+
         Path path = Path.of("data/" + fileName);
 
         while(!Files.exists(path)){
             System.out.println("File does not exist, please enter valid file name:");
             fileName = input.nextLine().trim();
+            fileName = addExtension(fileName, extension);
             path = Path.of("data/" + fileName);
         }
 
-        return loadTasksInternal(path);
+        return path;
     }
 
-    private boolean printAvailableTXTFiles(){
+    private String addExtension(String fileName, String extension){
+        if(!fileName.endsWith(extension)){
+            fileName += extension;
+        }
+        return fileName;
+    }
+
+    private boolean printAvailableFiles(String extension){
         Path dataDirectory = Path.of("data");
 
         if(!Files.exists(dataDirectory)){
@@ -96,7 +125,7 @@ public class IOManager{
 
         try{
             Files.list(dataDirectory)
-                    .filter(path -> path.toString().endsWith(".txt"))
+                    .filter(path -> path.toString().endsWith(extension))
                     .forEach(path -> System.out.print(path.getFileName() + " "));
             System.out.println();
         }
@@ -184,4 +213,23 @@ public class IOManager{
     private String extractValueFromLine(String line){
         return line.substring(line.indexOf(":") + 2);
     }
+
+    public void saveTasksToJSON(Scanner input, List<Task> tasks){
+        System.out.println("Please enter name under which this file will be saved or press Enter to select automatic name:");
+        String extension = ".json";
+        Path path = getCorrectFilePathToSave(input, extension);
+
+        try{
+            Files.createDirectories(Path.of("data"));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            mapper.writeValue(path.toFile(), tasks);
+            System.out.print("Tasks successfully saved to: ");
+            System.out.println(path.toAbsolutePath());
+        }
+        catch(IOException e){
+            System.out.println("Error while saving file.");
+        }
+     }
 }
