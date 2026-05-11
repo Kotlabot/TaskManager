@@ -18,6 +18,8 @@ public class Task{
         this.completed = completed;
     }
 
+    public Task(){}
+
     public void setName(String name){
         this.name = name;
     }
