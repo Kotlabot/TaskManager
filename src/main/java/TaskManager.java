@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class TaskManager{
@@ -557,6 +558,57 @@ public class TaskManager{
                 }
             }
         }
+    }
+
+    public void printTasksStatistics(){
+        System.out.println("Task statistics:");
+        int numberOfTasks = tasks.size();
+        System.out.println("- Total tasks: " + numberOfTasks);
+        int completedTasks = 0;
+        int incompletedTasks = 0;
+        int tasksWithUpcomingDeadline = 0;
+        int tasksWithOverdueDeadline = 0;
+        double sumOfPriorities = 0;
+        Map<String, Integer> types = new HashMap<>();
+        LocalDate today = LocalDate.now();
+
+        for(Task task : tasks){
+            if(task.getCompleted()){
+                completedTasks++;
+            }
+            else{
+                incompletedTasks++;
+            }
+
+            LocalDate deadline = task.getDeadline();
+            if(deadline != null){
+                long daysDifference = ChronoUnit.DAYS.between(today, deadline);
+                if(daysDifference >= 0){
+                    tasksWithUpcomingDeadline++;
+                }
+                else{
+                    tasksWithOverdueDeadline++;
+                }
+            }
+
+            sumOfPriorities += task.getPriority();
+
+            String taskType = task.getType();
+            if(taskType.equals("none")){
+                taskType = "undefined";
+            }
+            types.put(taskType, types.getOrDefault(taskType, 0) + 1);
+        }
+
+        System.out.println("- Completed tasks: " + completedTasks);
+        System.out.println("- Incompleted tasks: " + incompletedTasks);
+        System.out.println("- Upcoming tasks: " + tasksWithUpcomingDeadline);
+        System.out.println("- Overdue tasks: " + tasksWithOverdueDeadline);
+        double averagePriority = sumOfPriorities/numberOfTasks;
+        System.out.printf("- Average priority: %.2f%n", averagePriority);
+
+        types.entrySet().stream().sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .forEach(entry -> System.out.println("- Tasks of type '" + entry.getKey() + "': " + entry.getValue()));
     }
 
 }

@@ -50,6 +50,9 @@ public class Main{
                 case "pt":
                     tasks.printTasksOfType(userInput);
                     break;
+                case "stat":
+                    tasks.printTasksStatistics();
+                    break;
                 case "q":
                     System.out.println("Exiting Task Manager...");
                     return;
@@ -75,7 +78,8 @@ public class Main{
                    9) To SORT and PRINT tasks according to PRIORITY, enter 'pp' and press Enter
                    10) To SORT and PRINT tasks according to DEADLINE, enter 'pd' and press Enter
                    11) To PRINT tasks with defined TYPE, enter 'pt' and press Enter
-                   12) To END this program, enter 'q' and press Enter
+                   12) To PRINT tasks STATISTICS, enter 'stat' and press Enter
+                   13) To END this program, enter 'q' and press Enter
                 """
         );
     }
