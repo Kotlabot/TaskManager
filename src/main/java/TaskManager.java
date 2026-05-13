@@ -646,7 +646,7 @@ public class TaskManager{
             String keyword = input.nextLine();
 
             if(keyword.isEmpty()){
-                System.out.println("No keyword specified, please enter type or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
+                System.out.println("\033[1;31mNo keyword specified.\033[0m Please enter type or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
             }
             else if(keyword.equals("q")){
                 break;
@@ -663,7 +663,7 @@ public class TaskManager{
                 }
 
                 if(keywordTasks.isEmpty()){
-                    System.out.println("Defined type does not exist, please enter valid type, or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
+                    System.out.println("\033[1;31mDefined keyword does not exist.\033[0m Please enter valid keyword, or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
                     continue;
                 }
                 else{

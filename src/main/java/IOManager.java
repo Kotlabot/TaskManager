@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -208,7 +209,7 @@ public class IOManager{
 
             System.out.println("\033[1;32mTasks successfully loaded!\033[0m");
         }
-        catch(IOException e){
+        catch(IOException | DateTimeParseException e){
             System.out.println("\033[1;31mError while loading file.\033[0m");
             return null;
         }
