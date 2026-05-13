@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.regex.Pattern;
 
 public class Task{
     private String name;
@@ -79,7 +80,7 @@ public class Task{
         }
     }
 
-    public String printTaskWithDeadline(){
+    public String printTaskWithDeadline(String keyword){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         String deadlineString;
         if(deadline != null){
@@ -112,8 +113,15 @@ public class Task{
             deadlineString = "none";
         }
 
+        String nameString = getName();
         String descriptionString = getDescription();
         String typeString = getType();
+
+        if(!keyword.isEmpty()){
+            nameString = highlightKeyword(nameString, keyword);
+            descriptionString = highlightKeyword(descriptionString, keyword);
+            typeString = highlightKeyword(typeString, keyword);
+        }
 
         String completedString;
         if(completed){
@@ -130,7 +138,12 @@ public class Task{
            Priority: %d
            Type: %s
            Completed: %s
-           """.formatted(name, descriptionString, deadlineString, priority, typeString, completedString);
+           """.formatted(nameString, descriptionString, deadlineString, priority, typeString, completedString);
+    }
+
+    private String highlightKeyword(String text, String keyword){
+        String highlightedKeywords = "\033[1;33m" + keyword + "\033[0m";
+        return text.replaceAll("(?i)" + Pattern.quote(keyword), highlightedKeywords);
     }
 
     @Override
