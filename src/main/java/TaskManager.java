@@ -20,14 +20,14 @@ public class TaskManager{
 
     public void printAllTasks(){
         if(tasks.isEmpty()){
-            System.out.println("No tasks available.\n");
+            System.out.println("\033[1;31mNo tasks available.\n\033[0m");
             return;
         }
 
         System.out.println("------ TASK LIST ------");
 
         for(Task task : tasks){
-            System.out.println(task.printTaskWithDeadline() + "----------------------");
+            System.out.println(task.printTaskWithDeadline("") + "----------------------");
         }
     }
 
@@ -41,23 +41,38 @@ public class TaskManager{
         System.out.println("Setting task parameters...");
         Task newTask = new Task(name, description, deadline, priority, type, false);
         tasks.add(newTask);
-        System.out.println("Task successfully created!\n");
-        System.out.println("Created Task:\n");
-        System.out.println(newTask);
+        System.out.println("\033[1;32mTask successfully created!\n\033[0m");
+        System.out.println("\033[1mCreated Task:\n\033[0m");
+        System.out.println(newTask.printTaskWithDeadline(""));
         System.out.println();
     }
 
     private String setName(Scanner input){
         System.out.println("Write name of new task and press Enter:");
-        String name = input.nextLine();
         String taskName;
+        boolean duplicate;
 
-        if(name.isEmpty()){
-            taskName = "Task" + taskCounter++;
-            System.out.println("No name specified, defaulting to: '" + taskName + "'");
-        }
-        else{
-            taskName = name;
+        while(true){
+            String name = input.nextLine();
+            duplicate = false;
+
+            if(name.isEmpty()){
+                taskName = "Task" + taskCounter++;
+                System.out.println("\033[1;31mNo name specified, defaulting to: '" + taskName + "'\033[0m");
+                break;
+            }
+            else{
+                for(Task task : tasks){
+                    if(task.getName().equals(name)){
+                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and press Enter or just press Enter to generate automatic name: ");
+                        duplicate = true;
+                    }
+                }
+                if(!duplicate){
+                    taskName = name;
+                    break;
+                }
+            }
         }
         return taskName;
     }
@@ -88,7 +103,7 @@ public class TaskManager{
                 break;
             }
             catch(DateTimeParseException e){
-                System.out.println("Invalid format. Please use DD.MM.YYYY or press Enter to skip:");
+                System.out.println("\033[1;31mInvalid format.\033[0m Please use DD.MM.YYYY or press Enter to skip:");
             }
         }
         return taskDeadline;
@@ -109,7 +124,7 @@ public class TaskManager{
                 break;
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid format. Please select a valid integer or press Enter to skip:");
+                System.out.println("\033[1;31mInvalid format.\033[0m Please select a valid integer or press Enter to skip:");
             }
         }
         return taskPriority;
@@ -130,11 +145,11 @@ public class TaskManager{
         for(Task task : tasks){
             if(Objects.equals(task.getName(), taskName)){
                 tasks.remove(task);
-                System.out.println("Task " + taskName + " successfully deleted!\n");
+                System.out.println("\033[1;32mTask " + taskName + " successfully deleted!\n\033[0m");
                 return;
             }
         }
-        System.out.println("No task with such name was found!\n");
+        System.out.println("\033[1;31mNo task with such name was found!\n\033[0m");
     }
 
     public void editTask(Scanner input){
@@ -149,7 +164,7 @@ public class TaskManager{
         }
 
         if(editedTask == null){
-            System.out.println("No task with such name was found!\n");
+            System.out.println("\033[1;31mNo task with such name was found!\n\033[0m");
             return;
         }
 
@@ -175,15 +190,15 @@ public class TaskManager{
                 case "c":
                     boolean deleted = editCompleteness(input, editedTask);
                     if(deleted){
-                        System.out.println("Edited task was deleted, exiting edit mode...\n");
+                        System.out.println("\033[1mEdited task was deleted, exiting edit mode...\n\033[0m");
                         return;
                     }
                     break;
                 case "q":
-                    System.out.println("Exiting edit mode...\n");
+                    System.out.println("\033[1mExiting edit mode...\n\033[0m");
                     return;
                 default:
-                    System.out.println("Invalid command option.\n");
+                    System.out.println("\033[1;31mInvalid command option.\n\033[0m");
             }
             printEditMenu();
         }
@@ -192,14 +207,14 @@ public class TaskManager{
     private void printEditMenu(){
         System.out.println(
                 """
-                   ------ Task Manager EDIT MENU  -------
-                   1) To edit task's NAME, enter 'n' and press Enter
-                   2) To edit task's DESCRIPTION, enter 'ds' and press Enter
-                   3) To edit task's DEADLINE, enter 'dl' and press Enter
-                   4) To edit task's PRIORITY, enter 'p' and press Enter
-                   5) To edit task's TYPE, enter 't' and press Enter
-                   6) To edit task's COMPLETENESS, enter 'c' and press Enter
-                   7) To exit EDIT MODE, enter 'q' and press Enter
+                   \033[1;33m------ Task Manager EDIT MENU  -------\033[0m
+                   1) To edit task's \033[1mNAME\033[0m, enter \033[1m'n'\033[0m and press Enter
+                   2) To edit task's \033[1mDESCRIPTION\033[0m, enter \033[1m'ds'\033[0m and press Enter
+                   3) To edit task's \033[1mDEADLINE\033[0m, enter \033[1m'dl'\033[0m and press Enter
+                   4) To edit task's \033[1mPRIORITY\033[0m, enter \033[1m'p'\033[0m and press Enter
+                   5) To edit task's \033[1mTYPE\033[0m, enter \033[1m't'\033[0m and press Enter
+                   6) To edit task's \033[1mCOMPLETENESS\033[0m, enter \033[1m'c'\033[0m and press Enter
+                   7) To \033[1mEXIT\033[0m edit mode, enter \033[1m'q'\033[0m and press Enter
                 """
         );
     }
@@ -208,21 +223,33 @@ public class TaskManager{
         String currentName = task.getName();
         System.out.println("Current name of task: '" + currentName + "'");
         System.out.println("Enter new name and press Enter:");
+        boolean duplicate;
 
         while(true){
             String inputName = input.nextLine();
+            duplicate = false;
+
             if(inputName.isEmpty()){
-                System.out.println("No new name entered, please enter new name and press Enter or enter 'q' and press Enter to keep the current name:");
+                System.out.println("\033[1;31mNo new name entered.\033[0m Please enter new name and press Enter or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
                 continue;
             }
             if(inputName.equals("q")){
                 System.out.println("Keeping current name: '" + currentName + "'\n");
+                break;
             }
             else{
-                task.setName(inputName);
-                System.out.println("Name successfully changed from: '" + currentName + "' to: '" + inputName + "'\n");
+                for(Task currentTask : tasks){
+                    if(currentTask.getName().equals(inputName)){
+                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and press Enter or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
+                        duplicate = true;
+                    }
+                }
+                if(!duplicate){
+                    task.setName(inputName);
+                    System.out.println("\033[1;32mName successfully changed from: '" + currentName + "' to: '" + inputName + "'\n\033[0m");
+                    break;
+                }
             }
-            break;
         }
     }
 
@@ -238,11 +265,11 @@ public class TaskManager{
                 return;
             }
             if(inputDescription.isEmpty()){
-                System.out.println("No new description entered. Add new description or keep old one by entering 'q' and pressing Enter:");
+                System.out.println("No new description entered. Add new description or keep old one by entering \033[1m'q'\033[0m and pressing Enter:");
             }
             else{
                 task.setDescription(inputDescription);
-                System.out.println("Description successfully changed from: '" + currentDescription + "' to: '" + inputDescription + "'\n");
+                System.out.println("\033[1;32mDescription successfully changed from: '" + currentDescription + "' to: '" + inputDescription + "'\n\033[0m");
                 break;
             }
         }
@@ -267,7 +294,7 @@ public class TaskManager{
 
             if(inputDate.isEmpty()){
                 task.setDeadline(null);
-                System.out.println("Deadline successfully deleted!\n");
+                System.out.println("\033[1;32mDeadline successfully deleted!\n\033[0m");
                 break;
             }
 
@@ -279,11 +306,11 @@ public class TaskManager{
             try{
                 inputDeadline = LocalDate.parse(inputDate, formatter);
                 task.setDeadline(inputDeadline);
-                System.out.println("Deadline successfully changed from: '" + currentDeadline + "' to: '" + inputDate + "'\n");
+                System.out.println("\033[1;32mDeadline successfully changed from: '" + currentDeadline + "' to: '" + inputDate + "'\n\033[0m");
                 break;
             }
             catch(DateTimeParseException e){
-                System.out.println("Invalid format. Please use DD.MM.YYYY, or enter 'q' and press Enter to keep current deadline, or press Enter to delete deadline:");
+                System.out.println("\033[1;31mInvalid format.\033[0m Please use DD.MM.YYYY, or enter \033[1m'q'\033[0m and press Enter to keep current deadline, or press Enter to delete deadline:");
             }
         }
     }
@@ -304,11 +331,11 @@ public class TaskManager{
             try{
                 int newPriority = Integer.parseInt(inputPriority);
                 task.setPriority(newPriority);
-                System.out.println("Priority successfully changed from: '" + currentPriority + "' to: '" + newPriority + "'\n");
+                System.out.println("\033[1;32mPriority successfully changed from: '" + currentPriority + "' to: '" + newPriority + "'\n\033[0m");
                 break;
             }
             catch(NumberFormatException e){
-                System.out.println("Invalid format. Please select a valid integer or press Enter to keep current priority:");
+                System.out.println("\033[1;31mInvalid format.\033[0m Please select a valid integer or press Enter to keep current priority:");
             }
         }
     }
@@ -321,12 +348,12 @@ public class TaskManager{
         while(true){
             String newType = input.nextLine();
             if(newType.isEmpty()){
-                System.out.println("No type specified. Write new type and press Enter, or enter 'q' and press Enter to keep the current type, or enter 'd' and press Enter to delete current type:");
+                System.out.println("No type specified. Write new type and press Enter, or enter \033[1m'q'\033[0m and press Enter to keep the current type, or enter \033[1m'd'\033[0m and press Enter to delete current type:");
                 continue;
             }
             if(newType.equals("d")){
                 task.setType(null);
-                System.out.println("Type successfully deleted.\n");
+                System.out.println("\033[1;32mType successfully deleted.\n\033[0m");
                 break;
             }
             if(newType.equals("q")){
@@ -335,7 +362,7 @@ public class TaskManager{
             }
             else{
                 task.setType(newType);
-                System.out.println("Type successfully changed from: '" + currentType + "' to: '" + newType + "'\n");
+                System.out.println("\033[1;32mType successfully changed from: '" + currentType + "' to: '" + newType + "'\n\033[0m");
                 break;
             }
         }
@@ -346,12 +373,12 @@ public class TaskManager{
         String taskName = task.getName();
 
         if(completed){
-            System.out.println("Current task is marked as completed. Press Enter to mark task as incompleted, or enter 'q' and press Enter to remain unchanged.");
+            System.out.println("Current task is marked as completed. Press Enter to mark task as incompleted, or enter \033[1;32m'q'\033[0m and press Enter to remain unchanged.");
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
                     task.setCompleted(false);
-                    System.out.println("Successfully marked current task as incompleted.\n");
+                    System.out.println("\033[1;32mSuccessfully marked current task as incompleted.\n\033[0m");
                     return false;
                 }
                 if(newInput.equals("q")){
@@ -359,29 +386,29 @@ public class TaskManager{
                     return false;
                 }
                 else{
-                    System.out.println("Invalid option! Press Enter to mark task as incompleted, or enter 'q' and press Enter to remain unchanged.");
+                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as incompleted, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
                 }
             }
         }
         else{
-            System.out.println("Current task is marked as incompleted. Press Enter to mark task as completed, or enter 'q' and press Enter to remain unchanged.");
+            System.out.println("Current task is marked as incompleted. Press Enter to mark task as completed, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
                     task.setCompleted(true);
-                    System.out.println("Successfully marked current task as completed.\n");
+                    System.out.println("\033[1;32mSuccessfully marked current task as completed.\n\033[0m");
                     System.out.println("Task '" + taskName + "' is now completed. Would you like to delete this task? Type 'yes' or 'no' and press Enter:");
                     String answerDelete = input.nextLine().trim();
                     if(answerDelete.equals("yes")){
                         tasks.remove(task);
-                        System.out.println("Task successfully deleted!\n");
+                        System.out.println("\033[1;32mTask successfully deleted!\n\033[0m");
                         return true;
                     }
                     if(answerDelete.equals("no")){
-                        System.out.println("Keeping this task!\n");
+                        System.out.println("\033[1;32mKeeping this task!\n\033[0m");
                     }
                     else{
-                        System.out.println("Invalid option. Keeping this task!\n");
+                        System.out.println("\033[1;31mInvalid option.\033[0m Keeping this task!\n");
                     }
                     break;
                 }
@@ -390,7 +417,7 @@ public class TaskManager{
                     break;
                 }
                 else{
-                    System.out.println("Invalid option! Press Enter to mark task as completed, or enter 'q' and press Enter to remain unchanged.");
+                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as completed, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
                 }
             }
             return false;
@@ -399,7 +426,7 @@ public class TaskManager{
 
     public void printTasksSortedByPriority(){
         if(tasks.isEmpty()){
-            System.out.println("No tasks available.\n");
+            System.out.println("\033[1;31mNo tasks available.\n\033[0m");
             return;
         }
 
@@ -410,7 +437,7 @@ public class TaskManager{
         System.out.println("------ TASKS SORTED BY PRIORITY ------");
 
         for(Task task : sorted){
-            System.out.println(task.printTaskWithDeadline() + "--------------------------------------");
+            System.out.println(task.printTaskWithDeadline("") + "--------------------------------------");
         }
     }
 
@@ -463,7 +490,7 @@ public class TaskManager{
 
     public void printTasksSortedByDeadline(){
         if(tasks.isEmpty()){
-            System.out.println("No tasks available.\n");
+            System.out.println("\033[1;31mNo tasks available.\n\033[0m");
             return;
         }
 
@@ -474,7 +501,7 @@ public class TaskManager{
         System.out.println("------ TASKS SORTED BY DEADLINE ------");
 
         for(Task task : sorted){
-            System.out.println(task.printTaskWithDeadline() + "--------------------------------------");
+            System.out.println(task.printTaskWithDeadline("") + "--------------------------------------");
         }
     }
 
@@ -531,7 +558,7 @@ public class TaskManager{
             String inputType = input.nextLine();
 
             if(inputType.isEmpty()){
-                System.out.println("No type specified, please enter type or enter 'q' and press Enter to go back to main menu:");
+                System.out.println("No type specified, please enter type or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
             }
             else if(inputType.equals("q")){
                 break;
@@ -545,14 +572,14 @@ public class TaskManager{
                 }
 
                 if(oneTypeTasks.isEmpty()){
-                    System.out.println("Defined type does not exist, please enter valid type, or enter 'q' and press Enter to go back to main menu:");
+                    System.out.println("Defined type does not exist, please enter valid type, or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
                     continue;
                 }
                 else{
                     System.out.println("------ TASKS OF TYPE '" + inputType + "' ------");
 
                     for(Task task : oneTypeTasks){
-                        System.out.println(task.printTaskWithDeadline() + "----------------------");
+                        System.out.println(task.printTaskWithDeadline("") + "----------------------");
                     }
                     break;
                 }
@@ -609,6 +636,56 @@ public class TaskManager{
 
         types.entrySet().stream().sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .forEach(entry -> System.out.println("- Tasks of type '" + entry.getKey() + "': " + entry.getValue()));
+
+        System.out.println();
+    }
+
+    public void searchTasksWithKeyword(Scanner input){
+        System.out.println("Enter keyword you want to search for tasks by and press Enter:");
+        while(true){
+            String keyword = input.nextLine();
+
+            if(keyword.isEmpty()){
+                System.out.println("No keyword specified, please enter type or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
+            }
+            else if(keyword.equals("q")){
+                break;
+            }
+            else{
+                List<Task> keywordTasks = new ArrayList<>();
+                for(Task task : tasks){
+                    String name = task.getName();
+                    String description = task.getDescription();
+                    String type = task.getType();
+                    if(containsKeyword(name, keyword) || containsKeyword(description, keyword) || containsKeyword(type, keyword)){
+                        keywordTasks.add(task);
+                    }
+                }
+
+                if(keywordTasks.isEmpty()){
+                    System.out.println("Defined type does not exist, please enter valid type, or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
+                    continue;
+                }
+                else{
+                    System.out.println("------ TASKS CONTAINING KEYWORD '" + keyword + "' ------");
+
+                    for(Task task : keywordTasks){
+                        System.out.println(task.printTaskWithDeadline(keyword) + "----------------------");
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean containsKeyword(String taskParameter, String keyword){
+        String[] allWords = taskParameter.split(" ");
+        for(String word : allWords){
+            if(word.toLowerCase().contains(keyword.toLowerCase())){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

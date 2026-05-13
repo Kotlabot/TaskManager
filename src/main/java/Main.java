@@ -50,14 +50,17 @@ public class Main{
                 case "pt":
                     tasks.printTasksOfType(userInput);
                     break;
+                case "pk":
+                    tasks.searchTasksWithKeyword(userInput);
+                    break;
                 case "stat":
                     tasks.printTasksStatistics();
                     break;
                 case "q":
-                    System.out.println("Exiting Task Manager...");
+                    System.out.println("\033[1mExiting Task Manager...\033[0m");
                     return;
                 default:
-                    System.out.println("Invalid command option.");
+                    System.out.println("\033[1;31mInvalid command option.\033[0m");
             }
             printMenu();
         }
@@ -66,20 +69,21 @@ public class Main{
     public static void printMenu(){
         System.out.println(
                 """
-                   ------ Task Manager MAIN MENU -------
-                   1) To ADD new task, enter 'a' and press Enter
-                   2) To DELETE existing task, enter 'd' and press Enter
-                   3) To EDIT existing tasks, enter 'e' and press Enter
-                   4) To SAVE existing tasks as text file, enter 'stxt' and press Enter
-                   5) To LOAD a list of tasks from text file, enter 'ltxt' and press Enter
-                   6) To SAVE existing tasks as JSON file, enter 'sjson' and press Enter
-                   7) To LOAD a list of tasks from JSON file, enter 'ljson' and press Enter
-                   8) To PRINT all tasks, enter 'p' and press Enter
-                   9) To SORT and PRINT tasks according to PRIORITY, enter 'pp' and press Enter
-                   10) To SORT and PRINT tasks according to DEADLINE, enter 'pd' and press Enter
-                   11) To PRINT tasks with defined TYPE, enter 'pt' and press Enter
-                   12) To PRINT tasks STATISTICS, enter 'stat' and press Enter
-                   13) To END this program, enter 'q' and press Enter
+                   \033[1;33m------ Task Manager MAIN MENU -------\033[0m
+                   1) To \033[1mADD\033[0m new task, enter \033[1m'a'\033[0m and press Enter
+                   2) To \033[1mDELETE\033[0m existing task, enter \033[1m'd'\033[0m and press Enter
+                   3) To \033[1mEDIT\033[0m existing tasks, enter \033[1m'e'\033[0m and press Enter
+                   4) To \033[1mSAVE\033[0m existing tasks as text file, enter \033[1m'stxt'\033[0m and press Enter
+                   5) To \033[1mLOAD\033[0m a list of tasks from text file, enter \033[1m'ltxt'\033[0m and press Enter
+                   6) To \033[1mSAVE\033[0m existing tasks as JSON file, enter \033[1m'sjson'\033[0m and press Enter
+                   7) To \033[1mLOAD\033[0m a list of tasks from JSON file, enter \033[1m'ljson'\033[0m and press Enter
+                   8) To \033[1mPRINT\033[0m all tasks, enter \033[1m'p'\033[0m and press Enter
+                   9) To \033[1mSORT\033[0m and \033[1mPRINT\033[0m tasks according to \033[1mPRIORITY\033[0m, enter \033[1m'pp'\033[0m and press Enter
+                   10) To \033[1mSORT\033[0m and \033[1mPRINT\033[0m tasks according to \033[1mDEADLINE\033[0m, enter \033[1m'pd'\033[0m and press Enter
+                   11) To \033[1mPRINT\033[0m tasks with defined \033[1mTYPE\033[0m, enter \033[1m'pt'\033[0m and press Enter
+                   12) To \033[1mSEARCH\033[0m tasks with defined \033[1mKEYWORD\033[0m, enter \033[1m'pk'\033[0m and press Enter
+                   13) To \033[1mPRINT\033[0m tasks \033[1mSTATISTICS\033[0m, enter \033[1m'stat'\033[0m and press Enter
+                   14) To \033[1mEND\033[0m this program, enter \033[1m'q'\033[0m and press Enter
                 """
         );
     }

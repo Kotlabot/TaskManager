@@ -33,11 +33,11 @@ public class IOManager{
                 }
             }
 
-            System.out.print("Tasks successfully saved to: ");
+            System.out.print("\033[1;32mTasks successfully saved to: \033[0m");
             System.out.println(path.toAbsolutePath());
         }
         catch(IOException e){
-            System.out.println("Error while saving file.");
+            System.out.println("\033[1;31mError while saving file.\033[0m");
         }
     }
 
@@ -56,7 +56,7 @@ public class IOManager{
                 path = Path.of("data/" + fileName);
 
                 if(Files.exists(path)){
-                    System.out.println("This filename already exists. Please enter different name or press Enter to select automatic name:");
+                    System.out.println("\033[1;31mThis filename already exists.\033[0m Please enter different name or press Enter to select automatic name:");
                     continue;
                 }
                 break;
@@ -104,7 +104,7 @@ public class IOManager{
         Path path = Path.of("data/" + fileName);
 
         while(!Files.exists(path)){
-            System.out.println("File does not exist, please enter valid file name:");
+            System.out.println("\033[1;31mFile does not exist\033[0m, please enter valid file name:");
             fileName = input.nextLine().trim();
             fileName = addExtension(fileName, extension);
             path = Path.of("data/" + fileName);
@@ -124,7 +124,7 @@ public class IOManager{
         Path dataDirectory = Path.of("data");
 
         if(!Files.exists(dataDirectory)){
-            System.out.println("Directory 'data' does not exist, there are no available files to load.");
+            System.out.println("\033[1;31mDirectory 'data' does not exist, there are no available files to load.\033[0m");
             return false;
         }
 
@@ -135,7 +135,7 @@ public class IOManager{
             System.out.println();
         }
         catch(IOException e){
-            System.out.println("Error while reading the 'data' directory.");
+            System.out.println("\033[1;31mError while reading the 'data' directory.\033[0m");
         }
 
         return true;
@@ -206,10 +206,10 @@ public class IOManager{
                 loadedTasks.add(task);
             }
 
-            System.out.println("Tasks successfully loaded!");
+            System.out.println("\033[1;32mTasks successfully loaded!\033[0m");
         }
         catch(IOException e){
-            System.out.println("Error while loading file.");
+            System.out.println("\033[1;31mError while loading file.\033[0m");
             return null;
         }
 
@@ -231,11 +231,11 @@ public class IOManager{
             mapper.registerModule(new JavaTimeModule());
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             mapper.writeValue(path.toFile(), tasks);
-            System.out.print("Tasks successfully saved to: ");
+            System.out.print("\033[1;32mTasks successfully saved to: \033[0m");
             System.out.println(path.toAbsolutePath());
         }
         catch(IOException e){
-            System.out.println("Error while saving file.");
+            System.out.println("\033[1;31mError while saving file.\033[0m");
         }
     }
 
@@ -257,11 +257,11 @@ public class IOManager{
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             List<Task> loadedTasks = mapper.readValue(path.toFile(), new TypeReference<List<Task>>() {});
-            System.out.println("Tasks successfully loaded!");
+            System.out.println("\033[1;32mTasks successfully loaded!\033[0m");
             return loadedTasks;
         }
         catch(IOException e){
-            System.out.println("Error while loading file.");
+            System.out.println("\033[1;31mError while loading file.\033[0m");
             return null;
         }
     }
