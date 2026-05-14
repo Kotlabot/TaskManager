@@ -1,15 +1,31 @@
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Entry point of the Task Manager application
+ *
+ * Provides interface for managing tasks and saving/loading task files.
+ */
 public class Main{
-    public static void main(String[] args){
+
+    /**
+     * Starts the Task Manager application and handles user commands entered through console.
+     */
+    public static void main(){
         Scanner userInput = new Scanner(System.in);
+
+        // Initialize manager for list of tasks
         TaskManager tasks = new TaskManager();
+        // Initialize manager for saving/loading task files
         IOManager iomanager = new IOManager();
 
         printMenu();
+
+        // Main application loop
         while(true){
             String command = userInput.nextLine().trim();
+
+            // Handles user commands
             switch(command){
                 case "a":
                     tasks.addTask(userInput);
@@ -25,6 +41,8 @@ public class Main{
                     break;
                 case "ltxt":
                     List<Task> loadedTasksTXT = iomanager.loadTasksFromTXT(userInput);
+
+                    // Replace current task list with loaded tasks
                     if(loadedTasksTXT != null){
                         tasks = new TaskManager(loadedTasksTXT);
                     }
@@ -34,6 +52,8 @@ public class Main{
                     break;
                 case "ljson":
                     List<Task> loadedTasksJSON = iomanager.loadTasksFromJSON(userInput);
+
+                    // Replace current task list with loaded tasks
                     if(loadedTasksJSON != null){
                         tasks = new TaskManager(loadedTasksJSON);
                     }
@@ -62,10 +82,15 @@ public class Main{
                 default:
                     System.out.println("\033[1;31mInvalid command option.\033[0m");
             }
+
+            // Display main menu again after command execution
             printMenu();
         }
     }
 
+    /**
+     * Prints the main menu with all available commands.
+     */
     public static void printMenu(){
         System.out.println(
                 """
