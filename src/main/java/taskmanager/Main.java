@@ -1,3 +1,5 @@
+package taskmanager;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,18 +30,23 @@ public class Main{
             // Handles user commands
             switch(command){
                 case "a":
+                    // Add new task to list of tasks
                     tasks.addTask(userInput);
                     break;
                 case "d":
+                    // Delete existing task from list of tasks
                     tasks.deleteTask(userInput);
                     break;
                 case "e":
+                    // Edit existing task
                     tasks.editTask(userInput);
                     break;
                 case "stxt":
-                    iomanager.saveTasksToTXT(userInput, tasks.tasks);
+                    // Save current list of tasks to text file
+                    iomanager.saveTasksToTXT(userInput, tasks.getTasks());
                     break;
                 case "ltxt":
+                    // Load list of tasks from text file
                     List<Task> loadedTasksTXT = iomanager.loadTasksFromTXT(userInput);
 
                     // Replace current task list with loaded tasks
@@ -48,9 +55,11 @@ public class Main{
                     }
                     break;
                 case"sjson":
-                    iomanager.saveTasksToJSON(userInput, tasks.tasks);
+                    // Save current list of tasks to JSON file
+                    iomanager.saveTasksToJSON(userInput, tasks.getTasks());
                     break;
                 case "ljson":
+                    // Load list of tasks from JSON file
                     List<Task> loadedTasksJSON = iomanager.loadTasksFromJSON(userInput);
 
                     // Replace current task list with loaded tasks
@@ -59,24 +68,31 @@ public class Main{
                     }
                     break;
                 case "p":
+                    // Print all tasks in the task list
                     tasks.printAllTasks();
                     break;
                 case "pp":
+                    // Sort tasks in the list by descending priority and print
                     tasks.printTasksSortedByPriority();
                     break;
                 case "pd":
+                    // Sort tasks in the list by descending deadline and print
                     tasks.printTasksSortedByDeadline();
                     break;
                 case "pt":
+                    // Print only tasks with defined type
                     tasks.printTasksOfType(userInput);
                     break;
                 case "pk":
+                    // Print tasks which contains defined keyword
                     tasks.searchTasksWithKeyword(userInput);
                     break;
                 case "stat":
+                    // Print tasks statistics
                     tasks.printTasksStatistics();
                     break;
                 case "q":
+                    // Exit the task manager application
                     System.out.println("\033[1mExiting Task Manager...\033[0m");
                     return;
                 default:

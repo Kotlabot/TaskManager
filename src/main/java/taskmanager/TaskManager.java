@@ -1,23 +1,66 @@
+package taskmanager;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+/**
+ * Manages task operations in the console task manager application.
+ *
+ * Specifically manages:
+ * - creating tasks
+ * - deleting tasks
+ * - editing tasks
+ * - printing tasks
+ * - sorting tasks by priority and deadline
+ * - filtering tasks by type
+ * - searching tasks by keyword
+ * - printing tasks statistics
+ */
 public class TaskManager{
-    public List<Task> tasks;
+    /**
+     * List storing all created tasks.
+     */
+    private List<Task> tasks;
+
+    /**
+     * Counter used for automatic task name generation.
+     */
     private int taskCounter = 1;
 
-    // Create empty list of tasks
+    /**
+     * Creates an empty task manager list.
+     *
+     * Called when the application starts to prepare empty list for tasks.
+     */
     public TaskManager(){
         tasks = new ArrayList<>();
     }
 
-    // Create existing list of tasks (when loading from file)
+    /**
+     * Creates a task manager with an existing list of tasks.
+     *
+     * Called when loading existing list of tasks from file.
+     * @param tasks list of tasks to initialize the manager with
+     */
     public TaskManager(List<Task> tasks){
         this.tasks = new ArrayList<>(tasks);
     }
 
+    /**
+     * Returns list of all stored tasks.
+     *
+     * @return list of tasks
+     */
+    public List<Task> getTasks(){
+        return tasks;
+    }
+
+    /**
+     * Print all currently stored tasks.
+     */
     public void printAllTasks(){
         if(tasks.isEmpty()){
             System.out.println("\033[1;31mNo tasks available.\n\033[0m");
@@ -31,7 +74,13 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Creates new task according to user input and adds this task to task manager list.
+     *
+     * @param input scanner used for console input
+     */
     public void addTask(Scanner input){
+        // Call separate methods to set all task parameters.
         String name = setName(input);
         String description = setDescription(input);
         LocalDate deadline = setDeadline(input);
@@ -42,11 +91,20 @@ public class TaskManager{
         Task newTask = new Task(name, description, deadline, priority, type, false);
         tasks.add(newTask);
         System.out.println("\033[1;32mTask successfully created!\n\033[0m");
-        System.out.println("\033[1mCreated Task:\n\033[0m");
+        System.out.println("\033[1mCreated task:\n\033[0m");
         System.out.println(newTask.printTaskWithDeadline(""));
         System.out.println();
     }
 
+    /**
+     * Sets task name.
+     *
+     * Sets name of task by iterating through while loop until user inputs
+     * valid name (not duplicate) or user lets the method generate automatic name.
+     *
+     * @param input scanner used for console input
+     * @return valid task name
+     */
     private String setName(Scanner input){
         System.out.println("Write name of new task and press Enter:");
         String taskName;
@@ -56,18 +114,22 @@ public class TaskManager{
             String name = input.nextLine();
             duplicate = false;
 
+            // Generate automatic name according to task counter
             if(name.isEmpty()){
                 taskName = "Task" + taskCounter++;
                 System.out.println("\033[1;31mNo name specified, defaulting to: '" + taskName + "'\033[0m");
                 break;
             }
+            // Check for duplicate name
             else{
                 for(Task task : tasks){
                     if(task.getName().equals(name)){
-                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and press Enter or just press Enter to generate automatic name: ");
+                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and " +
+                                "press Enter or just press Enter to generate automatic name: ");
                         duplicate = true;
                     }
                 }
+                // If no duplicates are found, set the name and break from the loop
                 if(!duplicate){
                     taskName = name;
                     break;
@@ -77,8 +139,17 @@ public class TaskManager{
         return taskName;
     }
 
+    /**
+     * Sets task description.
+     *
+     * Either sets the description provided by user, or sets the description as null.
+     *
+     * @param input scanner used for console input
+     * @return task description or null
+     */
     private String setDescription(Scanner input){
-        System.out.println("If you would like to add a description of this task, write it down and press Enter, otherwise just press Enter:");
+        System.out.println("If you would like to add a description of this task, write it down and press Enter, " +
+                "otherwise just press Enter:");
         String taskDescription = input.nextLine();
         if(taskDescription.isEmpty()){
             taskDescription = null;
@@ -86,18 +157,30 @@ public class TaskManager{
         return taskDescription;
     }
 
+    /**
+     * Sets task deadline.
+     *
+     * Either sets the deadline provided by user while checking correct
+     * format of the date, or sets the deadline as null.
+     *
+     * @param input scanner used for console input
+     * @return valid task deadline or null
+     */
     private LocalDate setDeadline(Scanner input){
-        System.out.println("If you would like to add a deadline to this task, enter deadline in format 'DD.MM.YYYY' and press Enter, otherwise just press Enter:");
+        System.out.println("If you would like to add a deadline to this task, enter deadline in format 'DD.MM.YYYY'" +
+                " and press Enter, otherwise just press Enter:");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate taskDeadline = null;
 
         while(true){
             String inputDate = input.nextLine().trim();
 
+            // If no deadline is specified return null
             if(inputDate.isEmpty()){
                 break;
             }
 
+            // Otherwise try to parse the deadline until its in valid format
             try{
                 taskDeadline = LocalDate.parse(inputDate, formatter);
                 break;
@@ -109,8 +192,17 @@ public class TaskManager{
         return taskDeadline;
     }
 
+    /**
+     * Sets task priority.
+     *
+     * Either sets priority provided by user (where lower number means higher priority),
+     * or sets priority as 0, which indicate no priority.
+     * @param input scanner used for console input
+     * @return task priority
+     */
     private int setPriority(Scanner input){
-        System.out.println("If you would like to add this task a priority, enter a number (lower number = higher priority) and press Enter, otherwise just press Enter (no priority defaults to 0):");
+        System.out.println("If you would like to add this task a priority, enter a number (lower number = higher priority) " +
+                "and press Enter, otherwise just press Enter (no priority defaults to 0):");
         int taskPriority = 0;
         while(true){
             String inputPriority = input.nextLine().trim();
@@ -130,8 +222,17 @@ public class TaskManager{
         return taskPriority;
     }
 
+    /**
+     * Sets task type.
+     *
+     * Either sets the type provided by user, or sets the type as null.
+     *
+     * @param input scanner used for console input
+     * @return task type
+     */
     private String setType(Scanner input){
-        System.out.println("If you would like to add this task's type (work/personal/school subject), enter a type and press Enter, otherwise, press Enter:");
+        System.out.println("If you would like to add this task's type (work/personal/school subject), enter a type " +
+                "and press Enter, otherwise, just press Enter:");
         String taskType = input.nextLine();
         if(taskType.isEmpty()){
             taskType = null;
@@ -139,6 +240,11 @@ public class TaskManager{
         return taskType;
     }
 
+    /**
+     * Deletes a task with the specified name.
+     *
+     * @param input scanner used for console input
+     */
     public void deleteTask(Scanner input){
         System.out.println("Enter name of task you would like to delete and press Enter:");
         String taskName = input.nextLine();
@@ -152,11 +258,20 @@ public class TaskManager{
         System.out.println("\033[1;31mNo task with such name was found!\n\033[0m");
     }
 
+    /**
+     * Opens edit menu for a selected task.
+     *
+     * Checks for task name defined by user and if the name is valid (task of this name exists), enables editing of this task.
+     * Handles editing operations through separate methods.
+     *
+     * @param input scanner used for console input
+     */
     public void editTask(Scanner input){
         System.out.println("Enter name of task you would like to edit and press Enter:");
         String taskName = input.nextLine();
         Task editedTask = null;
 
+        // Find task to be edited by its name
         for(Task task : tasks){
             if(Objects.equals(task.getName(), taskName)){
                 editedTask = task;
@@ -169,8 +284,12 @@ public class TaskManager{
         }
 
         printEditMenu();
+
+        // Editing mode loop
         while(true){
             String command = input.nextLine().trim();
+
+            // Handles user commands
             switch(command){
                 case "n":
                     editName(input, editedTask);
@@ -189,6 +308,8 @@ public class TaskManager{
                     break;
                 case "c":
                     boolean deleted = editCompleteness(input, editedTask);
+
+                    // In case user delete the editing task, exit edit mode
                     if(deleted){
                         System.out.println("\033[1mEdited task was deleted, exiting edit mode...\n\033[0m");
                         return;
@@ -200,10 +321,15 @@ public class TaskManager{
                 default:
                     System.out.println("\033[1;31mInvalid command option.\n\033[0m");
             }
+
+            // Display edit menu again after command execution
             printEditMenu();
         }
     }
 
+    /**
+     * Prints the edit menu with all available commands.
+     */
     private void printEditMenu(){
         System.out.println(
                 """
@@ -219,6 +345,15 @@ public class TaskManager{
         );
     }
 
+    /**
+     * Edits existing task name.
+     *
+     * Edits name of task by iterating through while loop until user inputs
+     * valid new name (not duplicate) or decides to keep the current name unchanged.
+     *
+     * @param input scanner used for console input
+     * @param task edited task
+     */
     private void editName(Scanner input, Task task){
         String currentName = task.getName();
         System.out.println("Current name of task: '" + currentName + "'");
@@ -230,133 +365,202 @@ public class TaskManager{
             duplicate = false;
 
             if(inputName.isEmpty()){
-                System.out.println("\033[1;31mNo new name entered.\033[0m Please enter new name and press Enter or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
-                continue;
+                System.out.println("\033[1;31mNo new name entered.\033[0m Please enter new name and press Enter " +
+                        "or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
             }
-            if(inputName.equals("q")){
+            else if(inputName.equals("q")){
                 System.out.println("Keeping current name: '" + currentName + "'\n");
                 break;
             }
             else{
+                // Check for duplicate names
                 for(Task currentTask : tasks){
                     if(currentTask.getName().equals(inputName)){
-                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and press Enter or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
+                        System.out.println("\033[1;31mThis name already exists.\033[0m Please enter different name and " +
+                                "press Enter or enter \033[1m'q'\033[0m and press Enter to keep the current name:");
                         duplicate = true;
                     }
                 }
+                // If no duplicates are found, edit the name and break from the loop
                 if(!duplicate){
                     task.setName(inputName);
-                    System.out.println("\033[1;32mName successfully changed from: '" + currentName + "' to: '" + inputName + "'\n\033[0m");
+                    System.out.println("\033[1;32mName successfully changed from: '" + currentName +
+                            "' to: '" + inputName + "'\n\033[0m");
                     break;
                 }
             }
         }
     }
 
+    /**
+     * Edits task description.
+     *
+     * Edits description of task by iterating through while loop until user inputs
+     * new description or decides to keep the current description unchanged.
+     *
+     * @param input scanner used for console input
+     * @param task edited task
+     */
     private void editDescription(Scanner input, Task task){
         String currentDescription = task.getDescription();
         System.out.println("Current description of task: '" + currentDescription + "'");
-        System.out.println("Enter new description and press Enter:");
+        System.out.println("Enter new description and press Enter. In case you want to delete current description, " +
+                "enter \033[1m'd'\033[0m and press Enter:");
 
         while(true){
             String inputDescription = input.nextLine();
-            if(inputDescription.equals("q")){
-                System.out.println("Keeping current description: '" + currentDescription + "'\n");
-                return;
-            }
             if(inputDescription.isEmpty()){
-                System.out.println("No new description entered. Add new description or keep old one by entering \033[1m'q'\033[0m and pressing Enter:");
+                System.out.println("\033[1;31mNo new description entered.\033[0m Add new description and press Enter or keep old one by entering " +
+                        "\033[1m'q'\033[0m and pressing Enter or delete current description by entering \033[1m'd'\033[0m and pressing Enter:");
+            }
+            else if(inputDescription.equals("d")){
+                task.setDescription(null);
+                System.out.println("\033[1;32mDescription successfully deleted!\n\033[0m");
+                break;
+            }
+            else if(inputDescription.equals("q")){
+                System.out.println("Keeping current description: '" + currentDescription + "'\n");
+                break;
             }
             else{
                 task.setDescription(inputDescription);
-                System.out.println("\033[1;32mDescription successfully changed from: '" + currentDescription + "' to: '" + inputDescription + "'\n\033[0m");
+                System.out.println("\033[1;32mDescription successfully changed from: '" + currentDescription + "' to: '"
+                        + inputDescription + "'\n\033[0m");
                 break;
             }
         }
     }
 
+    /**
+     * Edits task deadline.
+     *
+     * Edits deadline of task by iterating through while loop until user inputs
+     * valid deadline or decides to delete the deadline, or keep the current deadline unchanged.
+     *
+     * @param input scanner used for console input
+     * @param task edited task
+     */
     private void editDeadline(Scanner input, Task task){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        LocalDate inputDeadline = task.getDeadline();
+        LocalDate currentDate = task.getDeadline();
         String currentDeadline;
-        if(inputDeadline == null){
+
+        // Format current deadline to display it to user
+        if(currentDate == null){
             currentDeadline = "none";
         }
         else{
-            currentDeadline = inputDeadline.format(formatter);
+            currentDeadline = currentDate.format(formatter);
         }
 
         System.out.println("Current deadline of task: '" + currentDeadline + "'");
-        System.out.println("Enter new deadline in format DD.MM.YYYY and press Enter, in case you want to delete deadline, just press Enter:");
+        System.out.println("Enter new deadline in format DD.MM.YYYY and press Enter. In case you want to delete current " +
+                "deadline, enter \033[1m'd'\033[0m and press Enter:");
 
         while(true){
             String inputDate = input.nextLine().trim();
-
             if(inputDate.isEmpty()){
+                System.out.println("\033[1;31mNo new deadline entered.\033[0m Add new deadline and press Enter or keep old one by entering " +
+                        "\033[1m'q'\033[0m and pressing Enter or delete current deadline by entering \033[1m'd'\033[0m and pressing Enter:");
+            }
+            else if(inputDate.equals("q")){
+                System.out.println("Keeping current deadline: '" + currentDeadline + "'\n");
+                break;
+            }
+            else if(inputDate.equals("d")){
                 task.setDeadline(null);
                 System.out.println("\033[1;32mDeadline successfully deleted!\n\033[0m");
                 break;
             }
-
-            if(inputDate.equals("q")){
-                System.out.println("Keeping current deadline: '" + currentDeadline + "'\n");
-                break;
-            }
-
-            try{
-                inputDeadline = LocalDate.parse(inputDate, formatter);
-                task.setDeadline(inputDeadline);
-                System.out.println("\033[1;32mDeadline successfully changed from: '" + currentDeadline + "' to: '" + inputDate + "'\n\033[0m");
-                break;
-            }
-            catch(DateTimeParseException e){
-                System.out.println("\033[1;31mInvalid format.\033[0m Please use DD.MM.YYYY, or enter \033[1m'q'\033[0m and press Enter to keep current deadline, or press Enter to delete deadline:");
+            // If user specifies some deadline, try to parse it until its in valid format
+            else{
+                try{
+                    currentDate = LocalDate.parse(inputDate, formatter);
+                    task.setDeadline(currentDate);
+                    System.out.println("\033[1;32mDeadline successfully changed from: '" + currentDeadline + "' to: '"
+                            + inputDate + "'\n\033[0m");
+                    break;
+                }
+                catch(DateTimeParseException e){
+                    System.out.println("\033[1;31mInvalid format.\033[0m Please use DD.MM.YYYY, or enter \033[1m'q'\033[0m " +
+                            "and press Enter to keep current deadline, or enter \033[1m'd'\033[0m and press Enter to delete deadline:");
+                }
             }
         }
     }
 
+    /**
+     * Edits task priority.
+     *
+     * Edits priority of task by iterating through while loop until user inputs
+     * valid priority (integer value) or decides to keep the current priority unchanged.
+     *
+     * @param input scanner used for console input
+     * @param task edited task
+     */
     private void editPriority(Scanner input, Task task){
         int currentPriority = task.getPriority();
         System.out.println("Current priority of task: '" + currentPriority + "'");
-        System.out.println("Enter new priority number (lower number = higher priority) and press Enter:");
+        System.out.println("Enter new priority number (lower number = higher priority) and press Enter. In case you " +
+                "want to delete current priority, enter \033[1m'd'\033[0m and press Enter:");
 
         while(true){
             String inputPriority = input.nextLine().trim();
-
             if(inputPriority.isEmpty()){
+                System.out.println("\033[1;31mNo new priority entered.\033[0m Add new priority and press Enter or keep old one by entering " +
+                        "\033[1m'q'\033[0m and pressing Enter or delete current priority by entering \033[1m'd'\033[0m and pressing Enter:");
+            }
+            else if(inputPriority.equals("q")){
                 System.out.println("Keeping current priority: '" + currentPriority + "'\n");
                 break;
             }
-
-            try{
-                int newPriority = Integer.parseInt(inputPriority);
-                task.setPriority(newPriority);
-                System.out.println("\033[1;32mPriority successfully changed from: '" + currentPriority + "' to: '" + newPriority + "'\n\033[0m");
+            else if(inputPriority.equals("d")){
+                task.setPriority(0);
+                System.out.println("\033[1;32mPriority successfully deleted!\n\033[0m");
                 break;
             }
-            catch(NumberFormatException e){
-                System.out.println("\033[1;31mInvalid format.\033[0m Please select a valid integer or press Enter to keep current priority:");
+            else{
+                try{
+                    int newPriority = Integer.parseInt(inputPriority);
+                    task.setPriority(newPriority);
+                    System.out.println("\033[1;32mPriority successfully changed from: '" + currentPriority + "' to: '" + newPriority + "'\n\033[0m");
+                    break;
+                }
+                catch(NumberFormatException e){
+                    System.out.println("\033[1;31mInvalid format.\033[0m Please select a valid integer, or enter \033[1m'q'\033[0m " +
+                            "and press Enter to keep current priority, or enter \033[1m'd'\033[0m and press Enter to delete priority:");
+                }
             }
         }
     }
 
+    /**
+     * Edits task type.
+     *
+     * Edits type of task by iterating through while loop until user inputs
+     * new type or decides to delete the type, or keep the current type unchanged.
+     *
+     * @param input scanner used for user input
+     * @param task edited task
+     */
     private void editType(Scanner input, Task task){
         String currentType = task.getType();
         System.out.println("Current type of task: '" + currentType + "'");
-        System.out.println("Enter new type and press enter key:");
+        System.out.println("Enter new type and press Enter. In case you want to delete current type, enter " +
+                "\033[1m'd'\033[0m and press Enter:");
 
         while(true){
             String newType = input.nextLine();
             if(newType.isEmpty()){
-                System.out.println("No type specified. Write new type and press Enter, or enter \033[1m'q'\033[0m and press Enter to keep the current type, or enter \033[1m'd'\033[0m and press Enter to delete current type:");
-                continue;
+                System.out.println("\033[1;31mNo type specified.\033[0m Write new type and press Enter, or enter \033[1m'q'\033[0m " +
+                        "and press Enter to keep the current type, or enter \033[1m'd'\033[0m and press Enter to delete current type:");
             }
-            if(newType.equals("d")){
+            else if(newType.equals("d")){
                 task.setType(null);
                 System.out.println("\033[1;32mType successfully deleted.\n\033[0m");
                 break;
             }
-            if(newType.equals("q")){
+            else if(newType.equals("q")){
                 System.out.println("Keeping the current type: '" + currentType + "'\n");
                 break;
             }
@@ -368,45 +572,67 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Edits task completion state.
+     *
+     * As there are two option of completion state (completed/incompleted), method offers to switch
+     * to the second state. If the task is changed to completed, method also offers deletion of the completed task.
+     *
+     * @param input scanner used for console input
+     * @param task edited task
+     * @return information about task deletion
+     */
     private boolean editCompleteness(Scanner input, Task task){
         boolean completed = task.getCompleted();
         String taskName = task.getName();
 
+        // If current task is completed, offer to mark it as incompleted or remain unchanged
         if(completed){
-            System.out.println("Current task is marked as completed. Press Enter to mark task as incompleted, or enter \033[1;32m'q'\033[0m and press Enter to remain unchanged.");
+            System.out.println("Current task is marked as completed. Press Enter to mark task as incompleted, or enter" +
+                    " \033[1;32m'q'\033[0m and press Enter to remain unchanged.");
+
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
                     task.setCompleted(false);
                     System.out.println("\033[1;32mSuccessfully marked current task as incompleted.\n\033[0m");
-                    return false;
+                    break;
                 }
-                if(newInput.equals("q")){
+                else if(newInput.equals("q")){
                     System.out.println("Keeping the current task completed.\n");
-                    return false;
+                    break;
                 }
                 else{
-                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as incompleted, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
+                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as incompleted, or " +
+                            "enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
                 }
             }
+            return false;
         }
+        // If current task is incompleted, offer to mark it as completed or remain unchanged
         else{
-            System.out.println("Current task is marked as incompleted. Press Enter to mark task as completed, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
+            System.out.println("Current task is marked as incompleted. Press Enter to mark task as completed, or enter " +
+                    "\033[1m'q'\033[0m and press Enter to remain unchanged.");
+
             while(true){
                 String newInput = input.nextLine().trim();
                 if(newInput.isEmpty()){
                     task.setCompleted(true);
                     System.out.println("\033[1;32mSuccessfully marked current task as completed.\n\033[0m");
-                    System.out.println("Task '" + taskName + "' is now completed. Would you like to delete this task? Type 'yes' or 'no' and press Enter:");
+                    System.out.println("Task '" + taskName + "' is now completed. Would you like to delete this task?" +
+                            " Type 'yes' or 'no' and press Enter:");
+
                     String answerDelete = input.nextLine().trim();
+                    // Delete completed task and return true to avoid further editing of deleted task
                     if(answerDelete.equals("yes")){
                         tasks.remove(task);
                         System.out.println("\033[1;32mTask successfully deleted!\n\033[0m");
                         return true;
                     }
-                    if(answerDelete.equals("no")){
+                    else if(answerDelete.equals("no")){
                         System.out.println("\033[1;32mKeeping this task!\n\033[0m");
                     }
+                    // Safe option - if no clear answer is provided, keep current task.
                     else{
                         System.out.println("\033[1;31mInvalid option.\033[0m Keeping this task!\n");
                     }
@@ -417,13 +643,17 @@ public class TaskManager{
                     break;
                 }
                 else{
-                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as completed, or enter \033[1m'q'\033[0m and press Enter to remain unchanged.");
+                    System.out.println("\033[1;31mInvalid option!\033[0m Press Enter to mark task as completed, or enter " +
+                            "\033[1m'q'\033[0m and press Enter to remain unchanged.");
                 }
             }
             return false;
         }
     }
 
+    /**
+     * Prints list of tasks sorted by priority using merge sort.
+     */
     public void printTasksSortedByPriority(){
         if(tasks.isEmpty()){
             System.out.println("\033[1;31mNo tasks available.\n\033[0m");
@@ -432,6 +662,8 @@ public class TaskManager{
 
         Task[] array = tasks.toArray(new Task[0]);
         Task[] sorted = mergeSortByPriority(array);
+
+        // Replace current list of tasks with the sorted tasks
         tasks = new ArrayList<>(Arrays.asList(sorted));
 
         System.out.println("------ TASKS SORTED BY PRIORITY ------");
@@ -441,6 +673,12 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Performs merge sort of tasks according to priority.
+     *
+     * @param array of tasks to sort
+     * @return sorted array of tasks
+     */
     private Task[] mergeSortByPriority(Task[] array){
         if(array.length <= 1){
             return array;
@@ -454,6 +692,13 @@ public class TaskManager{
         return mergeByPriority(left, right);
     }
 
+    /**
+     * Merges two sorted arrays of tasks according to priority.
+     *
+     * @param left left array to be merged
+     * @param right right array to be merged
+     * @return merged array of tasks
+     */
     private Task[] mergeByPriority(Task[] left, Task[] right){
         Task[] merged = new Task[left.length + right.length];
         int leftIndex = 0;
@@ -464,6 +709,8 @@ public class TaskManager{
             int leftPriority = left[leftIndex].getPriority();
             int rightPriority = right[rightIndex].getPriority();
 
+            // Priority "0" represent no priority, therefore in the sorting logic
+            // zero values are taken as the highest values possible
             if(leftPriority == 0){
                 leftPriority = Integer.MAX_VALUE;
             }
@@ -488,6 +735,9 @@ public class TaskManager{
         return merged;
     }
 
+    /**
+     * Prints list of tasks sorted by deadline using merge sort.
+     */
     public void printTasksSortedByDeadline(){
         if(tasks.isEmpty()){
             System.out.println("\033[1;31mNo tasks available.\n\033[0m");
@@ -496,6 +746,8 @@ public class TaskManager{
 
         Task[] array = tasks.toArray(new Task[0]);
         Task[] sorted = mergeSortByDeadline(array);
+
+        // Replace current list od tasks with the sorted one
         tasks = new ArrayList<>(Arrays.asList(sorted));
 
         System.out.println("------ TASKS SORTED BY DEADLINE ------");
@@ -505,6 +757,12 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Performs merge sort of tasks according to deadline.
+     *
+     * @param array of tasks to sort
+     * @return sorted array of tasks
+     */
     private Task[] mergeSortByDeadline(Task[] array){
         if(array.length <= 1){
             return array;
@@ -518,6 +776,13 @@ public class TaskManager{
         return mergeByDeadline(left, right);
     }
 
+    /**
+     * Merges two sorted arrays of tasks according to deadline.
+     *
+     * @param left left array to be merged
+     * @param right right array to be merged
+     * @return merged array of tasks
+     */
     private Task[] mergeByDeadline(Task[] left, Task[] right){
         Task[] merged = new Task[left.length + right.length];
         int leftIndex = 0;
@@ -528,12 +793,14 @@ public class TaskManager{
             LocalDate leftDate = left[leftIndex].getDeadline();
             LocalDate rightDate = right[rightIndex].getDeadline();
 
+            // Tasks with no deadlines pushed to the end of list
             if(leftDate == null){
                 merged[mergedIndex++] = right[rightIndex++];
             }
             else if(rightDate == null){
                 merged[mergedIndex++] = left[leftIndex++];
             }
+            // Task with valid deadlines are sorted according to actual date
             else if(leftDate.isBefore(rightDate) || leftDate.equals(rightDate)){
                 merged[mergedIndex++] = left[leftIndex++];
             }
@@ -552,6 +819,15 @@ public class TaskManager{
         return merged;
     }
 
+    /**
+     * Print task with defined type.
+     *
+     * Prints tasks of defined type by iterating through while loop until user enters valid
+     * existing type or decides to go back to main menu. If existing type is provided, method
+     * checks all tasks type and print those that match.
+     *
+     * @param input scanner used for console input
+     */
     public void printTasksOfType(Scanner input){
         System.out.println("Enter task type to print all tasks of this type:");
         while(true){
@@ -564,6 +840,7 @@ public class TaskManager{
                 break;
             }
             else{
+                // Add all matching tasks to new list
                 List<Task> oneTypeTasks = new ArrayList<>();
                 for(Task task : tasks){
                     if(task.getType().equals(inputType)){
@@ -575,6 +852,7 @@ public class TaskManager{
                     System.out.println("Defined type does not exist, please enter valid type, or enter \033[1m'q'\033[0m and press Enter to go back to main menu:");
                     continue;
                 }
+                // If at least one task matched the type, print tasks with provided type
                 else{
                     System.out.println("------ TASKS OF TYPE '" + inputType + "' ------");
 
@@ -587,8 +865,20 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Prints tasks statistics.
+     *
+     * Printed statistics include:
+     * - total number of tasks
+     * - number of completed tasks
+     * - number of incompleted tasks
+     * - number of upcoming tasks (deadline is ahead)
+     * - number of overdue task
+     * - average priority of tasks
+     * - number of tasks of every type existing
+     */
     public void printTasksStatistics(){
-        System.out.println("Task statistics:");
+        System.out.println("task statistics:");
         int numberOfTasks = tasks.size();
         System.out.println("- Total tasks: " + numberOfTasks);
         int completedTasks = 0;
@@ -596,7 +886,9 @@ public class TaskManager{
         int tasksWithUpcomingDeadline = 0;
         int tasksWithOverdueDeadline = 0;
         double sumOfPriorities = 0;
+        // Map for different types across tasks
         Map<String, Integer> types = new HashMap<>();
+        // Current date for deadline comparison
         LocalDate today = LocalDate.now();
 
         for(Task task : tasks){
@@ -609,6 +901,7 @@ public class TaskManager{
 
             LocalDate deadline = task.getDeadline();
             if(deadline != null){
+                // Calculate difference between current date and deadline
                 long daysDifference = ChronoUnit.DAYS.between(today, deadline);
                 if(daysDifference >= 0){
                     tasksWithUpcomingDeadline++;
@@ -624,6 +917,7 @@ public class TaskManager{
             if(taskType.equals("none")){
                 taskType = "undefined";
             }
+            // Count occurrences of each task type
             types.put(taskType, types.getOrDefault(taskType, 0) + 1);
         }
 
@@ -634,12 +928,21 @@ public class TaskManager{
         double averagePriority = sumOfPriorities/numberOfTasks;
         System.out.printf("- Average priority: %.2f%n", averagePriority);
 
+        // Print task types sorted by number of occurrences
         types.entrySet().stream().sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .forEach(entry -> System.out.println("- Tasks of type '" + entry.getKey() + "': " + entry.getValue()));
 
         System.out.println();
     }
 
+    /**
+     * Searches and prints tasks containing a specified keyword.
+     *
+     * The keyword is searched in task name, description and type.
+     * Matching keywords are highlighted during printing.
+     *
+     * @param input scanner used for console input
+     */
     public void searchTasksWithKeyword(Scanner input){
         System.out.println("Enter keyword you want to search for tasks by and press Enter:");
         while(true){
@@ -652,11 +955,14 @@ public class TaskManager{
                 break;
             }
             else{
+                // Store tasks containing the keyword in new list
                 List<Task> keywordTasks = new ArrayList<>();
                 for(Task task : tasks){
                     String name = task.getName();
                     String description = task.getDescription();
                     String type = task.getType();
+
+                    // Search keyword in name, description and type
                     if(containsKeyword(name, keyword) || containsKeyword(description, keyword) || containsKeyword(type, keyword)){
                         keywordTasks.add(task);
                     }
@@ -678,14 +984,23 @@ public class TaskManager{
         }
     }
 
+    /**
+     * Checks whether the specified text (task name, description or type) contains the specified keyword.
+     * The search is case-insensitive.
+     *
+     * @param taskParameter text to search keyword in
+     * @param keyword keyword to search for
+     * @return true if keyword is found, false if not
+     */
     private boolean containsKeyword(String taskParameter, String keyword){
+        // Split text into individual words
         String[] allWords = taskParameter.split(" ");
         for(String word : allWords){
+            // Compare each word ignoring upper/lower case
             if(word.toLowerCase().contains(keyword.toLowerCase())){
                 return true;
             }
         }
         return false;
     }
-
 }
