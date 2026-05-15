@@ -878,7 +878,12 @@ public class TaskManager{
      * - number of tasks of every type existing
      */
     public void printTasksStatistics(){
-        System.out.println("task statistics:");
+        if(tasks.isEmpty()){
+            System.out.println("\033[1;31mNo tasks available.\n\033[0m");
+            return;
+        }
+
+        System.out.println("Task statistics:");
         int numberOfTasks = tasks.size();
         System.out.println("- Total tasks: " + numberOfTasks);
         int completedTasks = 0;
