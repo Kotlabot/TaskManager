@@ -5,7 +5,7 @@
 Task manager is a simple console-based application written in Java, which allows users to manage personal tasks. It contains following features: creating, editing and seleting tasks, searching tasks and sorting of tasks, saving tasks to files (in TXT or JSON format) and loading tasks from files.
 
 ## Documentation
-- User documentation is available in `Documentation.pdf`
+- User documentation is available in `TaskManagerDocumentation.pdf`
 - Developer documentation is provided in the source code as Javadoc comments (generated Javadoc HTML is not included in the repository).
 
 ## Features
