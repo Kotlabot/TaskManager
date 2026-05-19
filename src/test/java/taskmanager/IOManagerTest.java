@@ -235,7 +235,10 @@ public class IOManagerTest{
         String output = outputStream.toString();
 
         // Test if method correctly offered existing files to load.
-        assertTrue(output.contains("tasks1.txt tasks2.txt"));
+        // Possible correction - files does not have to be in one exact order,
+        // therefore, this assertion might fail 'assertTrue(output.contains("tasks1.txt tasks2.txt")'
+        assertTrue(output.contains("tasks1.txt"));
+        assertTrue(output.contains("tasks2.txt"));
 
         // Clean up created files
         Files.deleteIfExists(Path.of("data/tasks1.txt"));
