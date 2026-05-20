@@ -652,7 +652,7 @@ public class TaskManager{
     }
 
     /**
-     * Prints list of tasks sorted by priority using merge sort.
+     * Prints list of tasks sorted by priority.
      */
     public void printTasksSortedByPriority(){
         if(tasks.isEmpty()){
@@ -660,83 +660,19 @@ public class TaskManager{
             return;
         }
 
-        Task[] array = tasks.toArray(new Task[0]);
-        Task[] sorted = mergeSortByPriority(array);
-
-        // Replace current list of tasks with the sorted tasks
-        tasks = new ArrayList<>(Arrays.asList(sorted));
+        // Priority "0" represent no priority, therefore in the sorting logic
+        // zero values are taken as the highest values possible
+        tasks.sort(Comparator.comparingInt(task -> task.getPriority() == 0 ? Integer.MAX_VALUE : task.getPriority()));
 
         System.out.println("------ TASKS SORTED BY PRIORITY ------");
 
-        for(Task task : sorted){
+        for(Task task : tasks){
             System.out.println(task.printTaskWithDeadline("") + "--------------------------------------");
         }
     }
 
     /**
-     * Performs merge sort of tasks according to priority.
-     *
-     * @param array of tasks to sort
-     * @return sorted array of tasks
-     */
-    private Task[] mergeSortByPriority(Task[] array){
-        if(array.length <= 1){
-            return array;
-        }
-
-        int middle = array.length / 2;
-
-        Task[] left = mergeSortByPriority(Arrays.copyOfRange(array, 0, middle));
-        Task[] right = mergeSortByPriority(Arrays.copyOfRange(array, middle, array.length));
-
-        return mergeByPriority(left, right);
-    }
-
-    /**
-     * Merges two sorted arrays of tasks according to priority.
-     *
-     * @param left left array to be merged
-     * @param right right array to be merged
-     * @return merged array of tasks
-     */
-    private Task[] mergeByPriority(Task[] left, Task[] right){
-        Task[] merged = new Task[left.length + right.length];
-        int leftIndex = 0;
-        int rightIndex = 0;
-        int mergedIndex = 0;
-
-        while(leftIndex < left.length && rightIndex < right.length){
-            int leftPriority = left[leftIndex].getPriority();
-            int rightPriority = right[rightIndex].getPriority();
-
-            // Priority "0" represent no priority, therefore in the sorting logic
-            // zero values are taken as the highest values possible
-            if(leftPriority == 0){
-                leftPriority = Integer.MAX_VALUE;
-            }
-            if(rightPriority == 0){
-                rightPriority = Integer.MAX_VALUE;
-            }
-            if(leftPriority <= rightPriority){
-                merged[mergedIndex++] = left[leftIndex++];
-            }
-            else{
-                merged[mergedIndex++] = right[rightIndex++];
-            }
-        }
-
-        while(leftIndex < left.length){
-            merged[mergedIndex++] = left[leftIndex++];
-        }
-        while(rightIndex < right.length){
-            merged[mergedIndex++] = right[rightIndex++];
-        }
-
-        return merged;
-    }
-
-    /**
-     * Prints list of tasks sorted by deadline using merge sort.
+     * Prints list of tasks sorted by deadline.
      */
     public void printTasksSortedByDeadline(){
         if(tasks.isEmpty()){
@@ -744,79 +680,14 @@ public class TaskManager{
             return;
         }
 
-        Task[] array = tasks.toArray(new Task[0]);
-        Task[] sorted = mergeSortByDeadline(array);
-
-        // Replace current list od tasks with the sorted one
-        tasks = new ArrayList<>(Arrays.asList(sorted));
+        // Tasks with no deadline are placed at the end
+        tasks.sort(Comparator.comparing(Task::getDeadline, Comparator.nullsLast(LocalDate::compareTo)));
 
         System.out.println("------ TASKS SORTED BY DEADLINE ------");
 
-        for(Task task : sorted){
+        for(Task task : tasks){
             System.out.println(task.printTaskWithDeadline("") + "--------------------------------------");
         }
-    }
-
-    /**
-     * Performs merge sort of tasks according to deadline.
-     *
-     * @param array of tasks to sort
-     * @return sorted array of tasks
-     */
-    private Task[] mergeSortByDeadline(Task[] array){
-        if(array.length <= 1){
-            return array;
-        }
-
-        int middle = array.length / 2;
-
-        Task[] left = mergeSortByDeadline(Arrays.copyOfRange(array, 0, middle));
-        Task[] right = mergeSortByDeadline(Arrays.copyOfRange(array, middle, array.length));
-
-        return mergeByDeadline(left, right);
-    }
-
-    /**
-     * Merges two sorted arrays of tasks according to deadline.
-     *
-     * @param left left array to be merged
-     * @param right right array to be merged
-     * @return merged array of tasks
-     */
-    private Task[] mergeByDeadline(Task[] left, Task[] right){
-        Task[] merged = new Task[left.length + right.length];
-        int leftIndex = 0;
-        int rightIndex = 0;
-        int mergedIndex = 0;
-
-        while(leftIndex < left.length && rightIndex < right.length){
-            LocalDate leftDate = left[leftIndex].getDeadline();
-            LocalDate rightDate = right[rightIndex].getDeadline();
-
-            // Tasks with no deadlines pushed to the end of list
-            if(leftDate == null){
-                merged[mergedIndex++] = right[rightIndex++];
-            }
-            else if(rightDate == null){
-                merged[mergedIndex++] = left[leftIndex++];
-            }
-            // Task with valid deadlines are sorted according to actual date
-            else if(leftDate.isBefore(rightDate) || leftDate.equals(rightDate)){
-                merged[mergedIndex++] = left[leftIndex++];
-            }
-            else{
-                merged[mergedIndex++] = right[rightIndex++];
-            }
-        }
-
-        while(leftIndex < left.length){
-            merged[mergedIndex++] = left[leftIndex++];
-        }
-        while(rightIndex < right.length){
-            merged[mergedIndex++] = right[rightIndex++];
-        }
-
-        return merged;
     }
 
     /**
