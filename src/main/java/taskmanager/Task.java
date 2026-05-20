@@ -178,46 +178,11 @@ public class Task{
      * @return formatted task information
      */
     public String printTaskWithDeadline(String keyword){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String deadlineString;
-
-        // Format deadline for printing. As deadline is optional parameter, if task has no deadline, print "none".
-        // Otherwise, format the deadline to string and add information about remaining days until deadline.
-        if(deadline != null){
-            deadlineString = deadline.format(formatter);
-
-            LocalDate today = LocalDate.now();
-
-            // Calculate difference between current date and deadline
-            long daysDifference = ChronoUnit.DAYS.between(today, deadline);
-
-            if(daysDifference >= 0){
-                if(daysDifference == 0){
-                    deadlineString += " (today)";
-                }
-                else if(daysDifference == 1){
-                    deadlineString += " (in " + daysDifference + " day)";
-                }
-                else{
-                    deadlineString += " (in " + daysDifference + " days)";
-                }
-            }
-            else{
-                if(daysDifference == -1){
-                    deadlineString += " (" + Math.abs(daysDifference) + " day after deadline)";
-                }
-                else{
-                    deadlineString += " (" + Math.abs(daysDifference) + " days after deadline)";
-                }
-            }
-        }
-        else{
-            deadlineString = "none";
-        }
-
         String nameString = getName();
         String descriptionString = getDescription();
+        String deadlineString = formatDeadline(true);
         String typeString = getType();
+        String completedString = formatCompletionState();
 
         // Highlight matching keywords in task parameters
         if(!keyword.isEmpty()){
@@ -226,22 +191,7 @@ public class Task{
             typeString = highlightKeyword(typeString, keyword);
         }
 
-        String completedString;
-        if(completed){
-            completedString = "completed";
-        }
-        else{
-            completedString = "incompleted";
-        }
-
-        return """
-           Name: %s
-           Description: %s
-           Deadline: %s
-           Priority: %d
-           Type: %s
-           Completed: %s
-           """.formatted(nameString, descriptionString, deadlineString, priority, typeString, completedString);
+        return formatTask(nameString, descriptionString, deadlineString, typeString, completedString);
     }
 
     /**
@@ -267,27 +217,78 @@ public class Task{
      */
     @Override
     public String toString(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String deadlineString;
+        return formatTask(getName(), getDescription(), formatDeadline(false), getType(), formatCompletionState());
+    }
 
-        if(deadline != null){
-            deadlineString = deadline.format(formatter);
-        }
-        else{
-            deadlineString = "none";
-        }
-
-        String descriptionString = getDescription();
-        String typeString = getType();
-
-        String completedString;
+    /**
+     * Returns formatted completion state.
+     *
+     * @return completion state as string
+     */
+    private String formatCompletionState(){
         if(completed){
-            completedString = "completed";
+            return "completed";
         }
         else{
-            completedString = "incompleted";
+            return "incompleted";
+        }
+    }
+
+    /**
+     * Returns formatted deadline string.
+     *
+     * @param printRemainingDays if true, adds remaining days information
+     * @return formatted deadline as string
+     */
+    private String formatDeadline(boolean printRemainingDays){
+        if(deadline == null){
+            return "none";
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String deadlineString = deadline.format(formatter);
+
+        if(!printRemainingDays){
+            return deadlineString;
+        }
+
+        LocalDate today = LocalDate.now();
+        long daysDifference = ChronoUnit.DAYS.between(today, deadline);
+
+        if(daysDifference >= 0){
+            if(daysDifference == 0){
+                deadlineString += " (today)";
+            }
+            else if(daysDifference == 1){
+                deadlineString += " (in " + daysDifference + " day)";
+            }
+            else{
+                deadlineString += " (in " + daysDifference + " days)";
+            }
+        }
+        else{
+            if(daysDifference == -1){
+                deadlineString += " (" + Math.abs(daysDifference) + " day after deadline)";
+            }
+            else{
+                deadlineString += " (" + Math.abs(daysDifference) + " days after deadline)";
+            }
+        }
+
+        return deadlineString;
+    }
+
+    /**
+     * Returns formatted task as string.
+     *
+     * @param nameString formatted task name
+     * @param descriptionString formatted description
+     * @param deadlineString formatted deadline
+     * @param typeString formatted type
+     * @param completedString formatted completion state
+     * @return formatted task string
+     */
+    private String formatTask(String nameString, String descriptionString, String deadlineString, String typeString, String completedString){
         return """
            Name: %s
            Description: %s
@@ -295,6 +296,6 @@ public class Task{
            Priority: %d
            Type: %s
            Completed: %s
-           """.formatted(name, descriptionString, deadlineString, priority, typeString, completedString);
+           """.formatted(nameString, descriptionString, deadlineString, priority, typeString, completedString);
     }
 }
