@@ -48,7 +48,6 @@ public class Main{
                 case "ltxt":
                     // Load list of tasks from text file
                     List<Task> loadedTasksTXT = iomanager.loadTasksFromTXT(userInput);
-
                     // Replace current task list with loaded tasks
                     if(loadedTasksTXT != null){
                         tasks = new TaskManager(loadedTasksTXT);

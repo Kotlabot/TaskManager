@@ -186,7 +186,7 @@ public class IOManager{
      * Prints available files in directory data with specified extension.
      *
      * @param extension file extension to search for
-     * @return true if directory data exists (loading can proceed), otherwise false
+     * @return true if directory data and available files exist (loading can proceed), otherwise false
      */
     private boolean printAvailableFiles(String extension){
         Path dataDirectory = Path.of("data");
@@ -197,10 +197,19 @@ public class IOManager{
         }
 
         try{
-            // Print only files from data directory with matching extension
-            Files.list(dataDirectory)
+            // Store files with matching extension into list
+            List<Path> matchingFiles = Files.list(dataDirectory)
                     .filter(path -> path.toString().endsWith(extension))
-                    .forEach(path -> System.out.print(path.getFileName() + " "));
+                    .toList();
+
+            // If no matching files are found, return to main menu
+            if(matchingFiles.isEmpty()){
+                System.out.println("\033[1;31mNo " + extension + " files available to load.\033[0m");
+                return false;
+            }
+
+            // Print available files from data directory with matching extension
+            matchingFiles.forEach(path -> System.out.print(path.getFileName() + " "));
             System.out.println();
         }
         catch(IOException e){
